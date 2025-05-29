@@ -1,84 +1,81 @@
-import React, { useState } from 'react';
-import { NavLinkItem } from '../types';
-
-const navLinks: NavLinkItem[] = [
-  { id: 'home', label: 'Home', href: '#hero' },
-  { id: 'services', label: 'Services', href: '#services' },
-  { id: 'why-us', label: 'Why Us', href: '#why-us' },
-  { id: 'testimonials', label: 'Testimonials', href: '#testimonials' },
-  { id: 'contact', label: 'Book Care', href: '#book-care' }, // Updated to point to the booking form
-];
-
-const MenuIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-  </svg>
-);
-
-const XIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-  </svg>
-);
+import React from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { 
+  ROUTE_HOME, ROUTE_SERVICES, ROUTE_BOOK_CARE, ROUTE_ADMIN_DASHBOARD, 
+  ROUTE_PAY_ONLINE, ROUTE_TESTIMONIALS, ROUTE_URGENT_HELP, ROUTE_WHY_US, ROUTE_LOGIN,
+  HeartIcon, LogoutIcon, LoginIcon // Added LoginIcon
+} from '../constants';
+import { useAuth } from '../auth/AuthContext';
 
 const Header: React.FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut: contextSignOut, isLoading } = useAuth();
+  const navigate = useNavigate();
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
+      isActive 
+        ? 'bg-primary text-white' 
+        : 'text-neutral-dark hover:bg-primary-light hover:text-primary-dark'
+    }`;
+
+  const handleLogout = async () => {
+    try {
+      await contextSignOut();
+      navigate(ROUTE_HOME);
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Optionally show an error message to the user
+    }
   };
 
   return (
-    <header className="bg-brand-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          <a href="#hero" className="text-2xl font-bold text-brand-purple">
-            CaringHandsNKY
-          </a>
-          
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-6 lg:space-x-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.id}
-                href={link.href}
-                className="text-brand-charcoal-light hover:text-brand-purple transition-colors duration-200 font-medium"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <nav className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          <NavLink to={ROUTE_HOME} className="flex items-center space-x-2 text-2xl font-bold text-primary">
+            <HeartIcon className="w-8 h-8" />
+            <span>CaringHandsNKY</span>
+          </NavLink>
+          <div className="hidden md:flex items-center space-x-1">
+            <NavLink to={ROUTE_HOME} className={navLinkClass}>Home</NavLink>
+            <NavLink to={ROUTE_SERVICES} className={navLinkClass}>Services</NavLink>
+            <NavLink to={ROUTE_WHY_US} className={navLinkClass}>Why Us</NavLink>
+            <NavLink to={ROUTE_TESTIMONIALS} className={navLinkClass}>Testimonials</NavLink>
+            <NavLink to={ROUTE_PAY_ONLINE} className={navLinkClass}>Pay Online</NavLink>
+            <NavLink to={ROUTE_URGENT_HELP} className={navLinkClass}>Urgent Help</NavLink>
+            
+            {!isLoading && user && (
+              <NavLink to={ROUTE_ADMIN_DASHBOARD} className={navLinkClass}>Admin</NavLink>
+            )}
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={toggleMobileMenu}
-              aria-label="Toggle menu"
-              className="text-brand-charcoal hover:text-brand-purple p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-purple"
+            <NavLink 
+              to={ROUTE_BOOK_CARE} 
+              className="ml-3 px-3 py-2 rounded-md text-sm font-medium text-white bg-accent hover:bg-accent-dark transition-colors duration-150"
             >
-              {isMobileMenuOpen ? <XIcon className="h-7 w-7" /> : <MenuIcon className="h-7 w-7" />}
-            </button>
-          </div>
-        </div>
-      </div>
+              Book Care
+            </NavLink>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 right-0 bg-brand-white shadow-lg z-40 animate-fade-in">
-          <nav className="flex flex-col items-center space-y-4 py-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.id}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="text-lg text-brand-charcoal-light hover:text-brand-purple transition-colors duration-200 py-2"
+            {!isLoading && user ? (
+              <button
+                onClick={handleLogout}
+                className="ml-3 flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-dark hover:bg-red-100 hover:text-red-700 transition-colors duration-150"
+                title="Logout"
               >
-                {link.label}
-              </a>
-            ))}
-          </nav>
+                <LogoutIcon className="w-5 h-5 mr-1" /> Logout
+              </button>
+            ) : !isLoading && (
+              <NavLink 
+                to={ROUTE_LOGIN} 
+                className="ml-3 flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-dark hover:bg-primary-light hover:text-primary-dark transition-colors duration-150"
+                title="Admin Login"
+              >
+                 <LoginIcon className="w-5 h-5 mr-1" /> Login
+              </NavLink>
+            )}
+          </div>
+          {/* Mobile menu button can be added here */}
         </div>
-      )}
+      </nav>
     </header>
   );
 };

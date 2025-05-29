@@ -1,59 +1,52 @@
-
-import React, { useState, useEffect } from 'react';
-import HeroSection from './components/HeroSection';
-import ServiceHighlights from './components/ServiceHighlights';
-import WhyChooseUs from './components/WhyChooseUs';
-import TestimonialSection from './components/TestimonialSection';
-import CallToActionFooter from './components/CallToActionFooter';
-import MainFooter from './components/MainFooter';
-import Header from './components/Header';
-import BookingForm from './components/BookingForm';
-import PaymentOptions from './components/PaymentOptions';
-import UrgentAssistance from './components/UrgentAssistance';
-import AdminBookingsView from './components/AdminBookingsView'; // Import AdminBookingsView
+import React from 'react';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
+import ServicesPage from './pages/ServicesPage';
+import BookCarePage from './pages/BookCarePage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import PayOnlinePage from './pages/PayOnlinePage';
+import TestimonialsPage from './pages/TestimonialsPage';
+import UrgentHelpPage from './pages/UrgentHelpPage';
+import WhyUsPage from './pages/WhyUsPage';
+import NotFoundPage from './pages/NotFoundPage';
+import LoginPage from './auth/LoginPage'; // Import LoginPage
+import { AuthProvider } from './auth/AuthContext'; // Import AuthProvider
+import ProtectedRoute from './auth/ProtectedRoute'; // Import ProtectedRoute
+import { 
+  ROUTE_HOME, ROUTE_SERVICES, ROUTE_BOOK_CARE, ROUTE_ADMIN_DASHBOARD, 
+  ROUTE_PAY_ONLINE, ROUTE_TESTIMONIALS, ROUTE_URGENT_HELP, ROUTE_WHY_US,
+  ROUTE_LOGIN // Import ROUTE_LOGIN
+} from './constants';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'main' | 'adminBookings'>('main');
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#admin/bookings') {
-        setCurrentView('adminBookings');
-      } else {
-        setCurrentView('main');
-      }
-    };
-
-    // Initial check
-    handleHashChange();
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, []);
-
-  const renderMainContent = () => (
-    <>
-      <HeroSection />
-      <ServiceHighlights />
-      <WhyChooseUs />
-      <TestimonialSection />
-      <CallToActionFooter />
-      <BookingForm />
-      <PaymentOptions />
-      <UrgentAssistance />
-    </>
-  );
-
   return (
-    <div className="flex flex-col min-h-screen bg-brand-white">
-      <Header />
-      <main className="flex-grow">
-        {currentView === 'adminBookings' ? <AdminBookingsView /> : renderMainContent()}
-      </main>
-      <MainFooter />
-    </div>
+    <AuthProvider>
+      <HashRouter>
+        <Layout>
+          <Routes>
+            <Route path={ROUTE_HOME} element={<HomePage />} />
+            <Route path={ROUTE_SERVICES} element={<ServicesPage />} />
+            <Route path={ROUTE_BOOK_CARE} element={<BookCarePage />} />
+            <Route 
+              path={ROUTE_ADMIN_DASHBOARD} 
+              element={
+                <ProtectedRoute>
+                  <AdminDashboardPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path={ROUTE_LOGIN} element={<LoginPage />} /> 
+            <Route path={ROUTE_PAY_ONLINE} element={<PayOnlinePage />} />
+            <Route path={ROUTE_TESTIMONIALS} element={<TestimonialsPage />} />
+            <Route path={ROUTE_URGENT_HELP} element={<UrgentHelpPage />} />
+            <Route path={ROUTE_WHY_US} element={<WhyUsPage />} />
+            <Route path="/admin/*" element={<Navigate to={ROUTE_ADMIN_DASHBOARD} replace />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Layout>
+      </HashRouter>
+    </AuthProvider>
   );
 };
 

@@ -1,5 +1,6 @@
 {
-  "name": "CaringHandsNKY Landing Page",
-  "description": "A landing page for CaringHandsNKY, an in-home caregiving and medical support service provider in Northern Kentucky. The page highlights services, trust factors, testimonials, and contact information.",
-  "requestFramePermissions": []
+  "name": " CaringHandsNKY",
+  "description": "A home care services web application for booking, managing, and exploring care options, built with React and Tailwind CSS.",
+  "requestFramePermissions": [],
+  "prompt": ""
 }

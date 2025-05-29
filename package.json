@@ -1,5 +1,5 @@
 {
-  "name": "caringhandsnky-landing-page",
+  "name": "caringhandsnky",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,9 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react-dom": "^19.1.0",
-    "react": "^19.1.0",
-    "@google/genai": "latest"
+    "react": "19",
+    "react-dom": "19",
+    "react-router-dom": "^6.25.0",
+    "@supabase/supabase-js": "2"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

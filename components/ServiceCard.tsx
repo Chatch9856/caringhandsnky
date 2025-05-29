@@ -1,34 +1,43 @@
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Service } from '../types';
-import useScrollAnimation from '../hooks/useScrollAnimation';
+import { ROUTE_BOOK_CARE } from '../constants';
+
 
 interface ServiceCardProps {
   service: Service;
-  index: number;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
-  const cardRef = useScrollAnimation<HTMLDivElement>({ 
-    animationClass: 'animate-fade-in-up', 
-    initialClass: 'opacity-0'
-  });
-  
-  // Stagger animation delay
-  const animationDelay = `${index * 0.15}s`;
-
+const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   return (
-    <div 
-      ref={cardRef}
-      style={{ animationDelay }}
-      className="bg-brand-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center text-center h-full"
-    >
-      {service.icon && React.isValidElement(service.icon) && (
-        <div className="mb-4 text-brand-purple">
-          {React.cloneElement(service.icon as React.ReactElement<{ className?: string }>, { className: "h-12 w-12" })}
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col">
+      <div className="p-6 flex-grow">
+        <div className="flex items-center mb-4">
+          {service.icon && <div className="mr-4 p-2 bg-primary-light rounded-full">{React.cloneElement(service.icon, { className: "w-8 h-8 text-primary-dark" })}</div>}
+          <h3 className="text-xl font-semibold text-primary-dark">{service.name}</h3>
         </div>
-      )}
-      <h3 className="text-xl font-semibold text-brand-charcoal mb-3">{service.title}</h3>
-      <p className="text-brand-charcoal-light text-sm leading-relaxed flex-grow">{service.description}</p>
+        <p className="text-neutral-DEFAULT text-sm mb-3">{service.description}</p>
+        {service.pricePerHour && (
+          <p className="text-lg font-bold text-secondary mb-3">${service.pricePerHour}/hour</p>
+        )}
+        {service.details && service.details.length > 0 && (
+          <ul className="list-disc list-inside text-sm text-neutral-DEFAULT space-y-1 mb-4">
+            {service.details.slice(0, 3).map((detail, index) => ( // Show up to 3 details
+              <li key={index}>{detail}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div className="p-6 bg-slate-50">
+         <Link 
+            to={ROUTE_BOOK_CARE} 
+            state={{ selectedServiceId: service.id }} // Pass serviceId in state
+            className="w-full block text-center bg-accent hover:bg-accent-dark text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-150"
+          >
+            Book This Service
+          </Link>
+      </div>
     </div>
   );
 };
