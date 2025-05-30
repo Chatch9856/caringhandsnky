@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BookingRequest, Service, BookingStatus } from '../types';
-// import { addBookingRequest } from '../services/bookingService'; // Replaced with Supabase
 import { supabase as supabaseClient } from '../services/supabaseClient';
-import { SAMPLE_SERVICES, ROUTE_HOME } from '../constants';
+import { SAMPLE_SERVICES, ROUTE_BOOKING_SUCCESS } from '../constants';
 import Modal from '../components/Modal';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -14,7 +12,7 @@ const BookCarePage: React.FC = () => {
   
   const initialServiceId = location.state?.selectedServiceId || '';
 
-  const [formData, setFormData] = useState<Omit<BookingRequest, 'id' | 'status' | 'submittedAt' | 'serviceName'>>({
+  const initialFormState = {
     clientName: '',
     clientEmail: '',
     clientPhone: '',
@@ -23,12 +21,14 @@ const BookCarePage: React.FC = () => {
     requestedTime: '',
     address: '',
     notes: '',
-  });
+  };
 
+  const [formData, setFormData] = useState<Omit<BookingRequest, 'id' | 'status' | 'submittedAt' | 'serviceName'>>(initialFormState);
   const [errors, setErrors] = useState<Partial<Record<keyof typeof formData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   
   const services: Service[] = SAMPLE_SERVICES; // In a real app, fetch this
 
@@ -38,64 +38,144 @@ const BookCarePage: React.FC = () => {
     }
   }, [initialServiceId]);
 
-  const validate = (): boolean => {
-    const newErrors: Partial<Record<keyof typeof formData, string>> = {};
-    if (!formData.clientName.trim()) newErrors.clientName = 'Full name is required.';
-    if (!formData.clientEmail.trim()) {
-      newErrors.clientEmail = 'Email is required.';
-    } else if (!/\S+@\S+\.\S+/.test(formData.clientEmail)) {
-      newErrors.clientEmail = 'Email is invalid.';
-    }
-    if (!formData.clientPhone.trim()) {
-      newErrors.clientPhone = 'Phone number is required.';
-    } else if (!/^\+?(\d.*){3,}$/.test(formData.clientPhone)) { // Basic phone validation
-        newErrors.clientPhone = 'Phone number is invalid.';
-    }
-    if (!formData.serviceId) newErrors.serviceId = 'Please select a service.';
-    if (!formData.requestedDate) newErrors.requestedDate = 'Requested date is required.';
-    else if (new Date(formData.requestedDate) < new Date(new Date().toDateString())) { // Compare date part only
-        newErrors.requestedDate = 'Requested date cannot be in the past.';
-    }
-    if (!formData.requestedTime) newErrors.requestedTime = 'Requested time is required.';
-    if (!formData.address.trim()) newErrors.address = 'Address is required.';
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  // --- Validation Functions ---
+  const validateClientNameField = (name: string): string | undefined => {
+    if (!name.trim()) return 'Full name is required.';
+    return undefined;
   };
+
+  const validateEmailField = (email: string): string | undefined => {
+    if (!email.trim()) return 'Email is required.';
+    if (!/\S+@\S+\.\S+/.test(email)) return 'Email is invalid.';
+    return undefined;
+  };
+
+  const validatePhoneField = (phone: string): string | undefined => {
+    if (!phone.trim()) return 'Phone number is required.';
+    const cleanedPhone = phone.replace(/[\s-()+]/g, ''); // Remove common separators
+    if (!/^\d{10}$/.test(cleanedPhone)) {
+      return 'Phone number must be 10 digits (e.g., 1234567890 or 123-456-7890).';
+    }
+    return undefined;
+  };
+
+  const validateServiceIdField = (serviceId: string): string | undefined => {
+    if (!serviceId) return 'Please select a service.';
+    return undefined;
+  };
+
+  const validateRequestedDateField = (dateStr: string): string | undefined => {
+    if (!dateStr) return 'Requested date is required.';
+    if (new Date(dateStr) < new Date(new Date().toDateString())) {
+      return 'Requested date cannot be in the past.';
+    }
+    return undefined;
+  };
+
+  const validateRequestedTimeField = (time: string): string | undefined => {
+    if (!time) return 'Requested time is required.';
+    return undefined;
+  };
+
+  const validateAddressField = (address: string): string | undefined => {
+    if (!address.trim()) return 'Address is required.';
+    return undefined;
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<keyof typeof formData, string>> = {};
+    newErrors.clientName = validateClientNameField(formData.clientName);
+    newErrors.clientEmail = validateEmailField(formData.clientEmail);
+    newErrors.clientPhone = validatePhoneField(formData.clientPhone);
+    newErrors.serviceId = validateServiceIdField(formData.serviceId);
+    newErrors.requestedDate = validateRequestedDateField(formData.requestedDate);
+    newErrors.requestedTime = validateRequestedTimeField(formData.requestedTime);
+    newErrors.address = validateAddressField(formData.address);
+    // No validation for formData.notes as it's optional
+    
+    const activeErrors = Object.fromEntries(
+      Object.entries(newErrors).filter(([, value]) => value !== undefined)
+    ) as Partial<Record<keyof typeof formData, string>>;
+
+    setErrors(activeErrors);
+    return Object.keys(activeErrors).length === 0;
+  };
+
+  useEffect(() => {
+    const hasValidationErrors = Object.values(errors).some(error => !!error);
+
+    const requiredFieldsAreFilled =
+      formData.clientName.trim() !== '' &&
+      formData.clientEmail.trim() !== '' &&
+      formData.clientPhone.trim() !== '' &&
+      formData.serviceId !== '' &&
+      formData.requestedDate !== '' &&
+      formData.requestedTime !== '' &&
+      formData.address.trim() !== '';
+
+    setIsSubmitDisabled(!requiredFieldsAreFilled || hasValidationErrors);
+  }, [formData, errors]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name as keyof typeof formData]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+
+    let fieldError: string | undefined;
+    switch (name) {
+      case 'clientName':
+        fieldError = validateClientNameField(value);
+        break;
+      case 'clientEmail':
+        fieldError = validateEmailField(value);
+        break;
+      case 'clientPhone':
+        fieldError = validatePhoneField(value);
+        break;
+      case 'serviceId':
+        fieldError = validateServiceIdField(value);
+        break;
+      case 'requestedDate':
+        fieldError = validateRequestedDateField(value);
+        break;
+      case 'requestedTime':
+        fieldError = validateRequestedTimeField(value);
+        break;
+      case 'address':
+        fieldError = validateAddressField(value);
+        break;
+      default:
+        fieldError = undefined;
     }
+    setErrors(prev => ({ ...prev, [name]: fieldError }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
+    setModalMessage(''); 
+
     try {
       const selectedServiceInstance = services.find(s => s.id === formData.serviceId);
       if (!selectedServiceInstance) {
         setModalMessage('Error: Selected service details could not be found. Please try again.');
         setIsModalOpen(true);
-        setIsSubmitting(false); // Ensure submitting state is reset
+        setIsSubmitting(false);
         return;
       }
 
-      const dataForSupabase = {
+      const dataForSupabase = { 
         full_name: formData.clientName,
         email: formData.clientEmail,
         phone_number: formData.clientPhone,
-        selected_service: selectedServiceInstance.name,
-        additional_notes: formData.notes || null,
         service_id: formData.serviceId,
-        service_name: selectedServiceInstance.name,
+        selected_service: selectedServiceInstance.name, 
         requested_date: formData.requestedDate,
         requested_time: formData.requestedTime,
         address: formData.address,
+        additional_notes: formData.notes || null, // Send null if notes is empty, or empty string
         status: BookingStatus.PENDING,
       };
       
@@ -104,49 +184,29 @@ const BookCarePage: React.FC = () => {
         .insert([dataForSupabase]);
 
       if (supabaseError) {
-        console.error("Supabase submission error object:", supabaseError); // Log the full object for debugging
+        console.error("DEBUG: Supabase submission error details:", JSON.stringify(supabaseError, null, 2)); 
 
         let detailedErrorMessage = "There was an error submitting your request.\n\n";
-
-        // Function to safely get string representation of an error part
-        const getSafeErrorString = (value: any, defaultValue: string = "N/A"): string => {
-          if (typeof value === 'string') {
-            return value;
-          }
-          if (value && typeof value === 'object') {
-            try {
-              const str = JSON.stringify(value);
-              return str.length > 200 ? str.substring(0, 197) + "..." : str; // Truncate long strings
-            } catch (e) {
-              return "[Complex Object]"; // Fallback for unstringifiable objects
-            }
-          }
-           if (value !== undefined && value !== null) { // Handle numbers, booleans etc.
-             return String(value);
-          }
-          return defaultValue;
+        const getSafeErrorString = (val: any, defaultVal: string = "N/A"): string => {
+          if (typeof val === 'string') return val;
+          if (val && typeof val === 'object') try { const s = JSON.stringify(val); return s === '{}' || s === 'null' ? defaultVal : s.length > 200 ? s.substring(0,197)+"..." : s; } catch (e) { return "[Complex Object]"; }
+          return val !== undefined && val !== null ? String(val) : defaultVal;
         };
-
         detailedErrorMessage += `Message: ${getSafeErrorString(supabaseError.message, 'An unknown error occurred.')}\n`;
+        if (supabaseError.details !== undefined && supabaseError.details !== null) detailedErrorMessage += `Details: ${getSafeErrorString(supabaseError.details)}\n`;
+        if (supabaseError.hint !== undefined && supabaseError.hint !== null) detailedErrorMessage += `Hint: ${getSafeErrorString(supabaseError.hint)}\n`;
+        if (supabaseError.code !== undefined && supabaseError.code !== null) detailedErrorMessage += `Code: ${getSafeErrorString(supabaseError.code)}\n`;
         
-        // Check for existence before adding to message to keep it cleaner
-        if (supabaseError.details !== undefined && supabaseError.details !== null) {
-          detailedErrorMessage += `Details: ${getSafeErrorString(supabaseError.details)}\n`;
-        }
-        if (supabaseError.hint !== undefined && supabaseError.hint !== null) {
-          detailedErrorMessage += `Hint: ${getSafeErrorString(supabaseError.hint)}\n`;
-        }
-        if (supabaseError.code !== undefined && supabaseError.code !== null) {
-          detailedErrorMessage += `Code: ${getSafeErrorString(supabaseError.code)}\n`;
-        }
-        
-        detailedErrorMessage = detailedErrorMessage.trim(); // Remove any trailing newline
-
-        setModalMessage(detailedErrorMessage + "\n\nPlease check your input and try again, or contact support if the issue persists.");
+        setModalMessage(detailedErrorMessage.trim() + "\n\nPlease check your input and try again, or contact support if the issue persists.");
         setIsModalOpen(true);
       } else {
-        setModalMessage('Your booking request has been submitted successfully! We will contact you shortly.');
-        setIsModalOpen(true);
+        setFormData(initialFormState); 
+        if (initialServiceId) {
+          setFormData(prev => ({ ...initialFormState, serviceId: initialServiceId }));
+        } else {
+          setFormData(initialFormState);
+        }
+        navigate(ROUTE_BOOKING_SUCCESS);
       }
     } catch (error) { 
       console.error("Booking submission general error:", error);
@@ -160,13 +220,6 @@ const BookCarePage: React.FC = () => {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    if (modalMessage.includes('successfully')) {
-      setFormData({
-        clientName: '', clientEmail: '', clientPhone: '', serviceId: '',
-        requestedDate: '', requestedTime: '', address: '', notes: '',
-      });
-      navigate(ROUTE_HOME); 
-    }
     setModalMessage(''); 
   };
   
@@ -178,26 +231,26 @@ const BookCarePage: React.FC = () => {
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-xl space-y-6">
         <div>
           <label htmlFor="clientName" className="block text-sm font-medium text-neutral-dark">Full Name</label>
-          <input type="text" name="clientName" id="clientName" value={formData.clientName} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.clientName ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" />
+          <input type="text" name="clientName" id="clientName" value={formData.clientName} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.clientName ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" aria-invalid={!!errors.clientName} />
           {errors.clientName && <p className="text-xs text-red-500 mt-1">{errors.clientName}</p>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="clientEmail" className="block text-sm font-medium text-neutral-dark">Email Address</label>
-            <input type="email" name="clientEmail" id="clientEmail" value={formData.clientEmail} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.clientEmail ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" />
+            <input type="email" name="clientEmail" id="clientEmail" value={formData.clientEmail} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.clientEmail ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" aria-invalid={!!errors.clientEmail} />
             {errors.clientEmail && <p className="text-xs text-red-500 mt-1">{errors.clientEmail}</p>}
           </div>
           <div>
             <label htmlFor="clientPhone" className="block text-sm font-medium text-neutral-dark">Phone Number</label>
-            <input type="tel" name="clientPhone" id="clientPhone" value={formData.clientPhone} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.clientPhone ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" />
+            <input type="tel" name="clientPhone" id="clientPhone" value={formData.clientPhone} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.clientPhone ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" aria-invalid={!!errors.clientPhone} />
             {errors.clientPhone && <p className="text-xs text-red-500 mt-1">{errors.clientPhone}</p>}
           </div>
         </div>
         
         <div>
           <label htmlFor="serviceId" className="block text-sm font-medium text-neutral-dark">Service Needed</label>
-          <select name="serviceId" id="serviceId" value={formData.serviceId} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.serviceId ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-white`} aria-required="true">
+          <select name="serviceId" id="serviceId" value={formData.serviceId} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.serviceId ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-white`} aria-required="true" aria-invalid={!!errors.serviceId}>
             <option value="" disabled>Select a service</option>
             {services.map(service => (
               <option key={service.id} value={service.id}>{service.name}</option>
@@ -209,19 +262,19 @@ const BookCarePage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="requestedDate" className="block text-sm font-medium text-neutral-dark">Requested Date</label>
-            <input type="date" name="requestedDate" id="requestedDate" value={formData.requestedDate} onChange={handleChange} min={today} className={`mt-1 block w-full px-3 py-2 border ${errors.requestedDate ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" />
+            <input type="date" name="requestedDate" id="requestedDate" value={formData.requestedDate} onChange={handleChange} min={today} className={`mt-1 block w-full px-3 py-2 border ${errors.requestedDate ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" aria-invalid={!!errors.requestedDate} />
             {errors.requestedDate && <p className="text-xs text-red-500 mt-1">{errors.requestedDate}</p>}
           </div>
           <div>
             <label htmlFor="requestedTime" className="block text-sm font-medium text-neutral-dark">Requested Time</label>
-            <input type="time" name="requestedTime" id="requestedTime" value={formData.requestedTime} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.requestedTime ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true"/>
+            <input type="time" name="requestedTime" id="requestedTime" value={formData.requestedTime} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.requestedTime ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" aria-invalid={!!errors.requestedTime}/>
             {errors.requestedTime && <p className="text-xs text-red-500 mt-1">{errors.requestedTime}</p>}
           </div>
         </div>
 
         <div>
           <label htmlFor="address" className="block text-sm font-medium text-neutral-dark">Full Address for Service</label>
-          <textarea name="address" id="address" rows={3} value={formData.address} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.address ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true"></textarea>
+          <textarea name="address" id="address" rows={3} value={formData.address} onChange={handleChange} className={`mt-1 block w-full px-3 py-2 border ${errors.address ? 'border-red-500' : 'border-slate-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`} aria-required="true" aria-invalid={!!errors.address}></textarea>
           {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
         </div>
 
@@ -233,8 +286,8 @@ const BookCarePage: React.FC = () => {
         <div>
           <button 
             type="submit" 
-            disabled={isSubmitting}
-            className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-accent hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-dark disabled:opacity-50"
+            disabled={isSubmitting || isSubmitDisabled}
+            className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-accent hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-dark disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? <LoadingSpinner size="sm" /> : 'Submit Request'}
           </button>

@@ -10,6 +10,7 @@ export const ROUTE_TESTIMONIALS = "/testimonials";
 export const ROUTE_URGENT_HELP = "/urgent-help";
 export const ROUTE_WHY_US = "/why-us";
 export const ROUTE_LOGIN = "/login";
+export const ROUTE_BOOKING_SUCCESS = "/booking-success";
 
 export const CalendarIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>

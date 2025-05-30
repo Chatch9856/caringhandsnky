@@ -19,8 +19,8 @@ const mapSupabaseBookingToLocal = (sbBooking: any): BookingRequest => ({
   serviceName: sbBooking.service_name || sbBooking.selected_service,
   requestedDate: sbBooking.requested_date,
   requestedTime: sbBooking.requested_time,
-  address: sbBooking.address,
-  notes: sbBooking.additional_notes || undefined, 
+  address: sbBooking.address, // This will be null/undefined if not in Supabase or not selected
+  notes: sbBooking.additional_notes || undefined,  // This will be null/undefined if not in Supabase or not selected
   status: sbBooking.status as BookingStatus, 
   submittedAt: sbBooking.created_at, 
 });
