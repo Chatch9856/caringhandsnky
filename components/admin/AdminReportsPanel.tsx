@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import LoadingSpinner from '../LoadingSpinner';
 import { ReportWidgetData } from '../../types';
-import { ChartBarIcon, UsersIcon, DocumentTextIcon, CurrencyDollarIcon } from '../../constants';
+import { ReportsIcon, UsersIcon, DocumentTextIcon, CurrencyDollarIcon } from '../../constants';
 // import { getReportWidgetsData } from '../../services/adminReportsService'; // Uncomment when service is implemented
 
 const AdminReportsPanel: React.FC = () => {

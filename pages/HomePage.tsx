@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTE_SERVICES, ROUTE_BOOK_CARE, ROUTE_WHY_US } from '../constants';
-import { SAMPLE_SERVICES, HeartIcon } from '../constants'; // Assuming SAMPLE_SERVICES is in constants.tsx
+import { SAMPLE_SERVICES, HeartIconLucide } from '../constants'; 
 import ServiceCard from '../components/ServiceCard';
 
 
@@ -12,9 +12,9 @@ const HomePage: React.FC = () => {
   return (
     <div className="space-y-12">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-secondary text-white py-20 px-6 rounded-lg shadow-xl">
+      <section className="bg-gradient-to-r from-primary to-secondary text-white py-20 px-6 rounded-2xl shadow-xl"> {/* Added rounded-2xl */}
         <div className="container mx-auto text-center">
-          <HeartIcon className="w-24 h-24 mx-auto mb-6 text-white opacity-80" />
+          <HeartIconLucide className="w-24 h-24 mx-auto mb-6 text-white opacity-80" /> {/* Updated Icon */}
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Compassionate Home Care in NKY</h1>
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
             Providing personalized, respectful, and reliable care services to support your loved ones in the comfort of their home.
@@ -22,13 +22,13 @@ const HomePage: React.FC = () => {
           <div className="space-x-4">
             <Link 
               to={ROUTE_BOOK_CARE} 
-              className="bg-accent hover:bg-accent-dark text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors shadow-md"
+              className="bg-accent hover:bg-accent-dark text-white font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-150 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105 focus:scale-105"
             >
               Book Care Now
             </Link>
             <Link 
               to={ROUTE_SERVICES} 
-              className="bg-white text-primary hover:bg-primary-light font-semibold py-3 px-8 rounded-lg text-lg transition-colors shadow-md"
+              className="bg-white text-primary hover:bg-primary-light font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-150 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105 focus:scale-105"
             >
               Explore Services
             </Link>
@@ -41,27 +41,27 @@ const HomePage: React.FC = () => {
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold text-primary-dark mb-8">Why Choose CaringHandsNKY?</h2>
           <div className="grid md:grid-cols-3 gap-8 text-left">
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200"> {/* Updated card style */}
               <h3 className="text-xl font-semibold text-secondary mb-2">Experienced Caregivers</h3>
               <p className="text-neutral-DEFAULT">Our team is composed of trained, vetted, and compassionate professionals dedicated to providing the highest quality care.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200"> {/* Updated card style */}
               <h3 className="text-xl font-semibold text-secondary mb-2">Personalized Care Plans</h3>
               <p className="text-neutral-DEFAULT">We work closely with you to create a customized care plan that meets the unique needs and preferences of your loved one.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200"> {/* Updated card style */}
               <h3 className="text-xl font-semibold text-secondary mb-2">Peace of Mind</h3>
               <p className="text-neutral-DEFAULT">We offer reliable and flexible services, giving you confidence that your family member is in good hands.</p>
             </div>
           </div>
-          <Link to={ROUTE_WHY_US} className="mt-8 inline-block bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+          <Link to={ROUTE_WHY_US} className="mt-8 inline-block bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-6 rounded-lg transition-colors transform hover:scale-105 focus:scale-105">
             Learn More About Us
           </Link>
         </div>
       </section>
 
       {/* Featured Services Section */}
-      <section className="py-12 bg-slate-100 rounded-lg">
+      <section className="py-12 bg-slate-100 rounded-2xl"> {/* Added rounded-2xl */}
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-primary-dark mb-10 text-center">Our Popular Services</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -72,7 +72,7 @@ const HomePage: React.FC = () => {
           <div className="text-center mt-10">
             <Link 
               to={ROUTE_SERVICES} 
-              className="bg-secondary hover:bg-secondary-dark text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors"
+              className="bg-secondary hover:bg-secondary-dark text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors transform hover:scale-105 focus:scale-105"
             >
               View All Services
             </Link>
@@ -88,7 +88,7 @@ const HomePage: React.FC = () => {
         </p>        
         <Link 
           to={ROUTE_BOOK_CARE} 
-          className="bg-accent hover:bg-accent-dark text-white font-semibold py-3 px-10 rounded-lg text-xl transition-colors shadow-lg"
+          className="bg-accent hover:bg-accent-dark text-white font-semibold py-3 px-10 rounded-lg text-xl transition-all duration-150 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 focus:scale-105"
         >
           Request a Consultation
         </Link>

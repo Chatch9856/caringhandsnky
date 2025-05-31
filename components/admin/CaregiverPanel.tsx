@@ -15,7 +15,7 @@ import { getCaregiverDocuments, addCaregiverDocument, deleteCaregiverDocument } 
 import {
   CAREGIVER_SUB_TAB_LIST, CAREGIVER_SUB_TAB_SHIFTS, CAREGIVER_SUB_TAB_DOCUMENTS,
   CAREGIVER_SUB_TAB_INCIDENTS, CAREGIVER_SUB_TAB_NOTIFICATIONS,
-  ListBulletIcon, ClockSolidIcon, DocumentDuplicateIcon, ExclamationCircleIcon, BellIcon,
+  ListBulletIcon, ClockSolidIcon, DocumentDuplicateIcon, ExclamationTriangleIcon, BellIcon,
   PlusCircleIcon, RefreshIconSolid, DeleteIcon as TrashIcon, CloudArrowUpIcon,
   ALLOWED_DOCUMENT_TYPES, MAX_DOCUMENT_SIZE_MB, CAREGIVER_DOCUMENT_TYPE_OPTIONS
 } from '../../constants';
@@ -272,7 +272,7 @@ const CaregiverPanel: React.FC = () => {
             { label: "Caregiver List", id: CAREGIVER_SUB_TAB_LIST, icon: <ListBulletIcon className="w-5 h-5" /> },
             { label: "Manage Shifts", id: CAREGIVER_SUB_TAB_SHIFTS, icon: <ClockSolidIcon className="w-5 h-5" /> },
             { label: "Documents", id: CAREGIVER_SUB_TAB_DOCUMENTS, icon: <DocumentDuplicateIcon className="w-5 h-5" /> },
-            { label: "Incidents", id: CAREGIVER_SUB_TAB_INCIDENTS, icon: <ExclamationCircleIcon className="w-5 h-5" />, disabled: true },
+            { label: "Incidents", id: CAREGIVER_SUB_TAB_INCIDENTS, icon: <ExclamationTriangleIcon className="w-5 h-5" />, disabled: true },
             { label: "Notifications", id: CAREGIVER_SUB_TAB_NOTIFICATIONS, icon: <BellIcon className="w-5 h-5" />, disabled: true },
           ].map(tab => (
             <TabButton
@@ -439,7 +439,7 @@ const CaregiverPanel: React.FC = () => {
 
         {[CAREGIVER_SUB_TAB_INCIDENTS, CAREGIVER_SUB_TAB_NOTIFICATIONS].includes(activeSubTab as any) && (
           <div className="text-center py-10 p-6 border border-slate-200 rounded-xl bg-slate-50 shadow-sm">
-            {activeSubTab === CAREGIVER_SUB_TAB_INCIDENTS && <ExclamationCircleIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />}
+            {activeSubTab === CAREGIVER_SUB_TAB_INCIDENTS && <ExclamationTriangleIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />}
             {activeSubTab === CAREGIVER_SUB_TAB_NOTIFICATIONS && <BellIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />}
             <h3 className="text-xl font-semibold text-primary-dark mb-2">
               {activeSubTab === CAREGIVER_SUB_TAB_INCIDENTS ? "Record & View Incidents" : "Send Notifications"}
