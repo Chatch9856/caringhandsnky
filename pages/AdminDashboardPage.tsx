@@ -1,22 +1,5 @@
-
-// This file's content is now part of AdminDashboardLayout.tsx and specific admin pages
-// like AdminBookingsPage.tsx, AdminContentPage.tsx, etc.
-// Please refer to those new files.
-
-// For the purpose of this exercise, if a single file update is strictly required,
-// I would paste the content of AdminDashboardLayout.tsx here.
-// However, the structure has changed to nested routes.
-
-// Keeping a minimal placeholder to satisfy the file update requirement,
-// but the actual logic is now distributed.
-import React from 'react';
-
-const AdminDashboardPagePlaceholder: React.FC = () => {
-  return (
-    <div>
-      <p>Admin Dashboard content has been refactored into a new layout and sub-pages. See AdminDashboardLayout.tsx and its nested routes in App.tsx.</p>
-    </div>
-  );
-};
-
-export default AdminDashboardPagePlaceholder;
+// This file is no longer used. 
+// The AdminLayout.tsx component now provides the overall structure for admin pages.
+// Specific admin panels (Bookings, Caregivers, etc.) are routed directly within AdminLayout in App.tsx.
+// The main dashboard content can be found in pages/admin_panels/AdminDashboardPanel.tsx.
+// The "classic" vs "modern" layout switching is handled within AdminLayout.tsx.
