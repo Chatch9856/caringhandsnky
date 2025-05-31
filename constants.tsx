@@ -4,7 +4,7 @@ import { Service, ServiceCategory, Testimonial, PredefinedSkill, PredefinedCerti
 import {
   Home, Settings, Users, CreditCard, BookText, BarChart3, Archive, Activity, MessageSquare, Briefcase,
   Heart, UsersRound, ShieldCheck, Zap, MessagesSquare, AlertTriangle, FileText, HandCoins,
-  PercentSquare, Layers, ListOrdered, Download, UploadCloud, CornerUpLeft, Clock, Settings2, // Added Settings2
+  PercentSquare, Layers, ListOrdered, Download, UploadCloud, CornerUpLeft, Clock,
   Copy, Bell, CalendarDays, ClipboardList, SquarePen, FileCheck, Send, Paperclip, UserCog, Eye, EyeOff, Search, ChevronsUpDown, ChevronDown,
   Trash2, PlusCircle, RefreshCw, Info, CheckCircle2, XCircle // Added CheckCircle2, XCircle, Info, Trash2, PlusCircle, RefreshCw
 } from 'lucide-react';
@@ -87,7 +87,6 @@ export const XCircleIcon = XCircle;         // Used in BookingRequestCard, Toast
 export const PersonIcon = UsersRound;       // Used in BookingRequestCard
 export const CalendarIcon = CalendarDays;   // Used in BookingRequestCard, BlogPostCard, BlogPostPage, PatientDashboardPage
 export const InformationCircleIcon = Info;  // Used in ToastContext
-export const Settings2Icon = Settings2;     // For the reported error
 
 // Other Lucide icons, often exported with a "Lucide" suffix or specific name for clarity
 export const HeartIconLucide = Heart; // Brand icon
