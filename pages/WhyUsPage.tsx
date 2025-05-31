@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { HeartIconLucide, PersonIcon, CheckCircleIcon } from '../constants'; // Assuming these are in constants.tsx
+import { HeartIcon, PersonIcon, CheckCircleIcon } from '../constants'; // Assuming these are in constants.tsx
 
 const WhyUsPage: React.FC = () => {
   const reasons = [
     {
-      icon: <HeartIconLucide className="w-12 h-12 text-primary" />,
+      icon: <HeartIcon className="w-12 h-12 text-primary" />,
       title: "Compassionate & Personalized Care",
       description: "We believe in treating every client with the utmost respect, dignity, and compassion. Our care plans are tailored to individual needs, ensuring a personal touch that makes a real difference in their lives and promotes independence."
     },

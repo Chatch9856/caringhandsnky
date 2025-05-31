@@ -1,41 +1,17 @@
-
 import React from 'react';
 import { Service, ServiceCategory, Testimonial, PredefinedSkill, PredefinedCertification, BlogPost, AppPaymentGateway, DocumentType } from './types';
-import {
-  Home, Settings, Users, CreditCard, BookText, BarChart3, Archive, Activity, MessageSquare, Briefcase,
-  Heart, UsersRound, ShieldCheck, Zap, MessagesSquare, AlertTriangle, FileText, HandCoins,
-  PercentSquare, Layers, ListOrdered, Download, UploadCloud, CornerUpLeft, Clock, Settings2, // Added Settings2
-  Copy, Bell, CalendarDays, ClipboardList, SquarePen, FileCheck, Send, Paperclip, UserCog, Eye, EyeOff, Search, ChevronsUpDown, ChevronDown,
-  Trash2, PlusCircle, RefreshCw, Info, CheckCircle2, XCircle // Added CheckCircle2, XCircle, Info, Trash2, PlusCircle, RefreshCw
-} from 'lucide-react';
-
 
 export const ROUTE_HOME = "/";
 export const ROUTE_SERVICES = "/services";
-export const ROUTE_BOOK_CARE = "/book-care"; 
-export const ROUTE_BOOKING_PUBLIC = "/book"; 
+export const ROUTE_BOOK_CARE = "/book-care"; // This is the old BookCarePage, potentially to be phased out or repurposed
+export const ROUTE_BOOKING_PUBLIC = "/book"; // New public booking page
 export const ROUTE_ADMIN_DASHBOARD = "/admin";
 export const ROUTE_PAY_ONLINE = "/pay-online";
 export const ROUTE_TESTIMONIALS = "/testimonials";
 export const ROUTE_URGENT_HELP = "/urgent-help";
 export const ROUTE_WHY_US = "/why-us";
 export const ROUTE_BLOG = "/blog";
-export const ROUTE_BLOG_POST_DETAIL_PREFIX = "/blog/"; 
-export const ROUTE_PATIENT_DASHBOARD = "/dashboard";
-export const ROUTE_LOGIN = "/login";
-
-
-// Admin Dashboard Main Tab Identifiers
-export const ADMIN_TAB_BOOKINGS = 'bookings';
-export const ADMIN_TAB_PAYMENTS = 'payments';
-export const ADMIN_TAB_CAREGIVERS = 'caregivers';
-export const ADMIN_TAB_SETTINGS = 'settings';
-export const ADMIN_TAB_REPORTS = 'reports';
-export const ADMIN_TAB_INVENTORY = 'inventory';
-export const ADMIN_TAB_ACTIVITY_LOG = 'activity_log';
-export const ADMIN_TAB_MESSAGES = 'messages';
-export const ADMIN_TAB_CASES = 'cases';
-
+export const ROUTE_BLOG_POST_DETAIL_PREFIX = "/blog/"; // Used for constructing links: /blog/:slug
 
 // Admin Payments Panel Sub-Tab Identifiers
 export const PAYMENT_SUB_TAB_GATEWAYS = 'gateways';
@@ -58,50 +34,63 @@ export const BOOKINGS_SUB_TAB_CALENDAR_VIEW = 'calendar_view';
 export const BOOKINGS_SUB_TAB_LOGS = 'logs';
 export const BOOKINGS_SUB_TAB_MANUAL_ENTRY = 'manual_entry';
 
-// Patient Dashboard Sub-Tab Identifiers
-export const PATIENT_DASHBOARD_PROFILE = 'profile';
-export const PATIENT_DASHBOARD_UPCOMING_BOOKINGS = 'upcoming_bookings';
-export const PATIENT_DASHBOARD_BOOKING_HISTORY = 'booking_history';
-export const PATIENT_DASHBOARD_SUBSCRIPTION = 'subscription';
-export const PATIENT_DASHBOARD_BILLING = 'billing';
-export const PATIENT_DASHBOARD_MESSAGES = 'messages';
-export const PATIENT_DASHBOARD_CASES = 'my_cases';
 
+// --- EXISTING ICONS ---
+export const CalendarIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-3.75h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+  </svg>
+);
 
-// --- LUCIDE ICONS ---
-// General & Navigation
-export const HomeIcon = Home;
-export const SettingsIcon = Settings;
-export const UsersIcon = UsersRound; // For Caregivers, Patients (Modern Admin)
-export const CreditCardIcon = CreditCard; // Payments
-export const BookingsIcon = BookText; // Bookings
-export const ReportsIcon = BarChart3; // Reports
-export const InventoryIcon = Archive; // Inventory
-export const ActivityLogIcon = Activity; // Activity Log
-export const MessagesIcon = MessageSquare; // Messages (Modern Admin)
-export const CasesIcon = Briefcase; // Cases (Modern Admin)
+export const PersonIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+  </svg>
+);
 
-// UI Elements specifically requested by components using direct import names
-export const CheckCircleIcon = CheckCircle2; // Used in BookingRequestCard, ToastContext
-export const XCircleIcon = XCircle;         // Used in BookingRequestCard, ToastContext
-export const PersonIcon = UsersRound;       // Used in BookingRequestCard
-export const CalendarIcon = CalendarDays;   // Used in BookingRequestCard, BlogPostCard, BlogPostPage, PatientDashboardPage
-export const InformationCircleIcon = Info;  // Used in ToastContext
-export const Settings2Icon = Settings2;     // For the reported error
+export const HeartIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+  </svg>
+);
 
-// Other Lucide icons, often exported with a "Lucide" suffix or specific name for clarity
-export const HeartIconLucide = Heart; // Brand icon
-// PersonIconLucide was UsersRound, now PersonIcon covers it. If needed elsewhere:
-// export const PersonIconLucide = UsersRound; 
-export const MedicalShieldIconLucide = ShieldCheck; // Specialized Care
-export const ClockIconLucide = Clock; // Respite Care, Time
-export const CarIconLucide = Zap; // Transportation (Zap for speed/service)
-export const HandshakeIconLucide = Users; // Companionship (Users for multiple people)
-export const HomeModernIconLucide = Home; // Household Help
-// CheckCircleIconLucide and XCircleIconLucide were incorrect mappings, replaced by direct exports above.
-export const ExclamationTriangleIcon = AlertTriangle; // Used in UrgentHelpPage, NotFoundPage
-export const DocumentTextIcon = FileText; // Document general, used in AdminReportsPanel
-export const StarIconLucide = (props: React.SVGProps<SVGSVGElement> & { filled?: boolean }) => {
+export const CogIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.07A7.5 7.5 0 0 1 12 4.5v15a7.5 7.5 0 0 1-7.957-7.43Z" />
+  </svg>
+);
+
+export const CheckCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+);
+
+export const XCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+);
+
+export const ExclamationTriangleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+  </svg>
+);
+
+export const DocumentTextIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Bookings Tab or general documents
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+  </svg>
+);
+
+export const CreditCardIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Payments Tab or Gateways Sub-Tab
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h6m3-5.25H21m-12-5.25a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v.75m13.5 0v.75a2.25 2.25 0 0 1-2.25 2.25H15a2.25 2.25 0 0 1-2.25-2.25V8.25m0 0H6.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+);
+
+export const StarIcon = (props: React.SVGProps<SVGSVGElement> & {filled?: boolean}) => {
   const { filled, className = '', ...rest } = props;
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
@@ -109,46 +98,193 @@ export const StarIconLucide = (props: React.SVGProps<SVGSVGElement> & { filled?:
          stroke="currentColor" strokeWidth={1.5} 
          className={`inline-block w-5 h-5 ${filled ? 'text-amber-400' : 'text-gray-300'} ${className}`}
          {...rest}>
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.82.61l-4.725-2.885a.562.562 0 0 0-.652 0l-4.725 2.885a.562.562 0 0 1-.82-.61l1.285-5.385a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
     </svg>
   );
 };
-export const NewspaperIcon = FileText; // Blog, used in BlogListPage
-export const CurrencyDollarIcon = HandCoins; // Pricing, Revenue, used in AdminReportsPanel, PricingTab
-export const ReceiptPercentIcon = PercentSquare; // Charges (with percent context), used in AdminPaymentsPanel
-export const RectangleStackIcon = Layers; // Subscriptions (layers of service), used in AdminPaymentsPanel, PatientDashboardPage
-export const ListBulletIcon = ListOrdered; // List view, Transaction list, used in AdminPaymentsPanel, TransactionsTab, CaregiverPanel, PatientDashboardPage
-export const ArrowDownTrayIcon = Download; // Export, used in TransactionsTab
-export const CloudArrowUpIcon = UploadCloud; // Upload, used in GatewaysTab, CaregiverPanel
-export const ArrowUturnLeftIcon = CornerUpLeft; // Refunds, Back, used in AdminPaymentsPanel, CaseDetailView
-export const ClockSolidIcon = Clock; // Shifts (filled variant if needed, Lucide is mostly outline), used in CaregiverPanel
-export const DocumentDuplicateIcon = Copy; // Documents tab, Copy action, used in CaregiverPanel
-// ExclamationCircleIconLucide was AlertTriangle, now covered by ExclamationTriangleIcon
-export const BellIcon = Bell; // Notifications, used in CaregiverPanel, SettingsPanel, TopBar
-export const CalendarSolidIcon = CalendarDays; // Calendar View, used in AdminBookingsPanel
-export const ClipboardListIcon = ClipboardList; // Booking Logs, used in AdminBookingsPanel
-export const PencilSquareIcon = SquarePen; // Manual Entry, Edit, used in AdminBookingsPanel
-export const ClipboardDocumentCheckIcon = FileCheck; // Public Booking Success, used in PublicBookingPage
-export const PaperclipIcon = Paperclip; // Attach file, used in CaseDetailView
-export const SendIcon = Send; // Send message, used in AdminMessagesPanel, ChatWindow, CaseDetailView
-export const UserGroupIcon = Users; // Assigned Staff, Group contexts
-export const DefaultCaregiverIcon = UserCog; // Default avatar, used in CaregiverFormModal, CaregiverListTable, AdminMessagesPanel, ChatMessage, ConversationList
-export const UserCircleIcon = UserCog; // User avatar placeholder for blog author, PatientDashboardPage, BlogPostCard, BlogPostPage, CaseDetailView
-export const EditIcon = SquarePen; // Edit action, used in CaregiverListTable, AdminInventoryPanel
-export const DeleteIcon = Trash2; // Delete action, lucide-react uses Trash2, used in CaregiverListTable, GatewaysTab, AdminInventoryPanel
-export const PlusCircleIcon = PlusCircle; // Add action, used in AdminDashboardPage, ChargesTab, SubscriptionsTab, CaregiverPanel, AdminInventoryPanel, AdminCasesPanel, CaseDetailView
-export const RefreshIconSolid = RefreshCw; // Sync/Refresh (lucide-react uses RefreshCw or RefreshCcw), used in AdminDashboardPage, CaregiverPanel, AdminBookingsPanel, NotificationSettingsPanel, AdminCasesPanel, AdminActivityLogPanel
-// InformationCircleIconLucide was Info, now covered by InformationCircleIcon above
-export const SearchIcon = Search; // Used in AdminBookingsPanel
-export const EyeIcon = Eye;
-export const EyeOffIcon = EyeOff;
-export const ChevronsUpDownIcon = ChevronsUpDown;
-export const ChevronDownIcon = ChevronDown; // Used in AdminBookingsPanel
-export const MessageSquareIcon = MessageSquare; // Used in PatientDashboardPage
-export const BriefcaseIcon = Briefcase;       // Used in PatientDashboardPage, AdminCasesPanel
-export const ArchiveBoxIcon = Archive;        // Used in AdminInventoryPanel
-export const DocumentMagnifyingGlassIcon = FileText; // Used in AdminActivityLogPanel (FileText as placeholder)
-export const CogIcon = Settings; // Used in AdminSettingsPanel, AdminCasesPanel
+
+export const HandshakeIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Companionship
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 11.667 0l3.181-3.183m-4.994 0-3.182-3.182A8.25 8.25 0 0 0 9.171 6.12m0 6.175 3.181-3.182m0-4.39 3.18 3.181" />
+  </svg>
+);
+
+export const HomeModernIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Household Help
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h7.5" />
+  </svg>
+);
+
+export const MedicalShieldIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Specialized Care
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.286Zm0 0V6M3 12h18" />
+  </svg>
+);
+
+export const ClockIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Respite Care or general time
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+);
+
+export const CarIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Transportation
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.139A48.784 48.784 0 0 0 12 5.25c-2.295 0-4.516.325-6.674.92.007.001.014.002.021.002Z" />
+  </svg>
+);
+
+// --- ICONS for CAREGIVER MANAGEMENT, TOASTS, BLOG, PAYMENTS PANEL ---
+export const UsersIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Caregivers Tab or List
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5V12c0-1.657-1.343-3-3-3h-1.5M4.5 13.5V12c0-1.657 1.343-3 3-3h1.5" />
+  </svg>
+);
+
+export const EditIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+  </svg>
+);
+
+export const DeleteIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12.56 0c.342.052.682.107 1.022.166m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+  </svg>
+);
+
+export const PlusCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+);
+
+export const RefreshIconSolid = (props: React.SVGProps<SVGSVGElement>) => ( // For Sync Now
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
+    <path fillRule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.458 2.52l-.345.344a.75.75 0 1 1-1.06-1.06l.344-.345a5.504 5.504 0 0 1 7.017-7.017l.343.343a.75.75 0 0 1-1.06 1.061l-.343-.343a3.995 3.995 0 0 0-5.09 1.024 3.999 3.999 0 0 0-1.025 5.09.75.75 0 1 1-1.408-.518 5.5 5.5 0 0 1 9.458-2.52ZM4.688 8.576a5.5 5.5 0 0 1 9.457-2.52l.345-.344a.75.75 0 1 1 1.06 1.06l-.344.345a5.504 5.504 0 0 1-7.017 7.017l-.343-.343a.75.75 0 0 1 1.06-1.061l.343.343a3.995 3.995 0 0 0 5.09-1.024 3.999 3.999 0 0 0 1.025-5.09.75.75 0 1 1 1.408.518 5.5 5.5 0 0 1-9.457 2.52Z" clipRule="evenodd" />
+  </svg>
+);
+
+export const InformationCircleIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Info Toast
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+  </svg>
+);
+
+export const DefaultCaregiverIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Placeholder if no image
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+  </svg>
+);
+
+export const UserCircleIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For default author avatar
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+  </svg>
+);
+
+export const NewspaperIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Blog
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25H5.625a2.25 2.25 0 01-2.25-2.25V7.875c0-.621.504-1.125 1.125-1.125H7.5M12 4.5L12 7.5m0 0l0 3m0-3h-3m3 0h3m-3-3l0-3m0 3l0 3" />
+  </svg>
+);
+
+// --- Icons for Payments Panel ---
+export const CurrencyDollarIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Pricing
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+);
+
+export const ReceiptPercentIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Charges
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-1.5h5.25m-5.25 0h3m-3 0h-3m2.25-4.5H5.625c-.621 0-1.125.504-1.125 1.125v6c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-6c0-.621-.504-1.125-1.125-1.125H12M17.25 12a4.5 4.5 0 0 1-9 0 4.5 4.5 0 0 1 9 0Zm-.217-2.613a.374.374 0 0 1 .534.533l-2.436 2.437a.375.375 0 0 1-.534-.534l2.436-2.436Z" />
+  </svg>
+);
+
+export const RectangleStackIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Subscriptions
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-3.75 2.063M21.75 12l-4.179-2.25M6.429 14.25l5.571 3 5.571-3M6.429 14.25L2.25 12l4.179-2.25m11.142 0l4.179 2.25-4.179 2.25m0 0l-5.571 3-5.571-3" />
+  </svg>
+);
+
+export const ListBulletIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Transactions List or Caregiver List or Bookings List View
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h7.5M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+  </svg>
+);
+
+export const ArrowDownTrayIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Export or Upload Icon
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+  </svg>
+);
+
+export const CloudArrowUpIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For QR Code Upload or general file upload
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+  </svg>
+);
+
+
+export const ArrowUturnLeftIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Refunds
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+  </svg>
+);
+
+// --- New Icons for Caregiver Panel Sub-Tabs ---
+export const ClockSolidIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Shifts
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
+    <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clipRule="evenodd" />
+  </svg>
+);
+
+export const DocumentDuplicateIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Documents
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75M9.06 4.5H12m3.75 0h.375a1.125 1.125 0 0 1 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125h-9.75A1.125 1.125 0 0 1 3.375 7.125v-1.5A1.125 1.125 0 0 1 4.5 4.5m9.06 0v1.5h-9.06V4.5m9.06 0H12M9 4.5h.75M12 4.5H9m3 13.5V12m0 0H9m3 0h3m3-3H9m0 0H6.75M9 12H6.75m9 0h2.25m-2.25 0H12m2.25 0H9" />
+  </svg>
+);
+
+export const ExclamationCircleIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Incidents
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.286Zm0 0V6M3 12h18" />
+  </svg>
+);
+
+export const BellIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Notifications
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+  </svg>
+);
+
+// --- NEW Icons for Admin Bookings Panel Sub-Tabs ---
+export const CalendarSolidIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Calendar View
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
+    <path fillRule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2Zm-1 5.5c0-.414.336-.75.75-.75h10.5a.75.75 0 010 1.5H5.5a.75.75 0 01-.75-.75Z" clipRule="evenodd" />
+  </svg>
+);
+
+export const ClipboardListIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Booking Logs
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM11.25 12h.008v.008h-.008V12z" />
+  </svg>
+);
+
+export const PencilSquareIcon = (props: React.SVGProps<SVGSVGElement>) => ( // For Manual Booking Entry
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+  </svg>
+);
+
+// --- Icon for Public Booking Page ---
+export const ClipboardDocumentCheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25c.414 0 .82.123 1.188.354M10.125 2.25V7.5c0 .621.504 1.125 1.125 1.125h4.5M13.5 14.25L11.25 12l-1.258 1.258a1.12 1.12 0 00-.317.522l-.038.156a.68.68 0 00.317.773l2.072 1.179a.68.68 0 00.773-.317l.038-.156a1.12 1.12 0 00-.317-.522L13.5 14.25z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5a3 3 0 11-6 0 3 3 0 016 0z" />
+ </svg>
+);
+
 
 
 // --- DATA CONSTANTS ---
@@ -158,7 +294,7 @@ export const SAMPLE_SERVICES: Service[] = [
     name: 'Personal Care Assistance', 
     description: 'Dignified help with daily activities like bathing, dressing, and mobility.',
     category: ServiceCategory.PERSONAL_CARE, 
-    icon: <UsersIcon className="w-12 h-12 text-primary" />, 
+    icon: <PersonIcon className="w-12 h-12 text-primary" />,
     pricePerHour: 25,
     details: ["Bathing and hygiene assistance", "Dressing and grooming", "Mobility support and transfers", "Medication reminders"]
   },
@@ -167,7 +303,7 @@ export const SAMPLE_SERVICES: Service[] = [
     name: 'Companionship & Socialization', 
     description: 'Friendly company, conversation, and engagement in favorite hobbies.',
     category: ServiceCategory.COMPANIONSHIP, 
-    icon: <HandshakeIconLucide className="w-12 h-12 text-secondary" />,
+    icon: <HandshakeIcon className="w-12 h-12 text-secondary" />,
     pricePerHour: 22,
     details: ["Meaningful conversation and engagement", "Accompanying to social events", "Playing games and hobbies", "Reading aloud"]
   },
@@ -176,7 +312,7 @@ export const SAMPLE_SERVICES: Service[] = [
     name: 'Light Household Help', 
     description: 'Support with light housekeeping, meal prep, and errands.',
     category: ServiceCategory.HOUSEHOLD_HELP, 
-    icon: <HomeModernIconLucide className="w-12 h-12 text-accent" />,
+    icon: <HomeModernIcon className="w-12 h-12 text-accent" />,
     pricePerHour: 20,
     details: ["Light tidying and cleaning", "Meal planning and preparation", "Laundry and linen changes", "Grocery shopping and errands"]
   },
@@ -185,7 +321,7 @@ export const SAMPLE_SERVICES: Service[] = [
     name: 'Specialized Care Support', 
     description: 'Tailored care for conditions like Dementia, Alzheimer’s, or post-surgery recovery.',
     category: ServiceCategory.SPECIALIZED_CARE, 
-    icon: <MedicalShieldIconLucide className="w-12 h-12 text-red-500" />,
+    icon: <MedicalShieldIcon className="w-12 h-12 text-red-500" />,
     pricePerHour: 30,
     details: ["Memory care support", "Post-operative assistance", "Chronic condition management support", "Coordination with healthcare providers"]
   },
@@ -194,7 +330,7 @@ export const SAMPLE_SERVICES: Service[] = [
     name: 'Respite Care', 
     description: 'Temporary relief for family caregivers, providing peace of mind.',
     category: ServiceCategory.RESPITE_CARE, 
-    icon: <ClockIconLucide className="w-12 h-12 text-purple-500" />,
+    icon: <ClockIcon className="w-12 h-12 text-purple-500" />,
     pricePerHour: 28,
     details: ["Short-term care solutions", "Flexible scheduling", "Support for primary caregivers", "Ensuring continuity of care"]
   },
@@ -203,7 +339,7 @@ export const SAMPLE_SERVICES: Service[] = [
     name: 'Transportation Services', 
     description: 'Safe and reliable transportation to appointments, social outings, and errands.',
     category: ServiceCategory.TRANSPORTATION, 
-    icon: <CarIconLucide className="w-12 h-12 text-blue-500" />,
+    icon: <CarIcon className="w-12 h-12 text-blue-500" />,
     pricePerHour: 24,
     details: ["Medical appointments", "Grocery shopping and errands", "Social events and visits", "Wheelchair accessible options (if available)"]
   }
@@ -215,7 +351,8 @@ export const SAMPLE_TESTIMONIALS: Testimonial[] = [
   { id: 't3', author: 'Lisa P.', text: 'Finding reliable care was stressful until we found CaringHandsNKY. Their companionship service has made a huge difference for my mother.', rating: 4, date: '2024-06-01' },
 ];
 
-
+// Defines the *types* of gateways an admin can configure.
+// The actual configurations (handle, instructions, etc.) will be stored in Supabase.
 export const AVAILABLE_GATEWAY_TYPES: { type: string, defaultInstructions: string, placeholder: string }[] = [
   { type: "CashApp", defaultInstructions: "Send payment to our CashApp ID.", placeholder: "$YourCashTag" },
   { type: "Venmo", defaultInstructions: "Pay us via Venmo @OurVenmoHandle.", placeholder: "@YourVenmo" },
@@ -225,27 +362,25 @@ export const AVAILABLE_GATEWAY_TYPES: { type: string, defaultInstructions: strin
 ];
 
 
-
+// --- CAREGIVER MANAGEMENT CONSTANTS ---
 export const CAREGIVER_PHOTO_BUCKET = 'caregiver_photos';
 export const CAREGIVER_DOCUMENTS_BUCKET = 'caregiver_documents';
 export const CAREGIVER_INCIDENT_ATTACHMENTS_BUCKET = 'incident_attachments';
-export const CASE_FILES_BUCKET = 'case_files'; 
-
 
 export const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif']; 
-export const MAX_IMAGE_SIZE_MB = 5; 
+export const MAX_IMAGE_SIZE_MB = 5; // 5MB
 
 export const ALLOWED_DOCUMENT_TYPES = [
     'application/pdf', 
     'image/png', 
     'image/jpeg', 
     'image/webp',
-    'application/msword', 
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+    'application/msword', // .doc
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // .docx
 ];
 export const MAX_DOCUMENT_SIZE_MB = 10;
 
-
+// Document types for selection in forms
 export const CAREGIVER_DOCUMENT_TYPE_OPTIONS: DocumentType[] = [
     DocumentType.LICENSE,
     DocumentType.ID,
@@ -260,7 +395,7 @@ export const PREDEFINED_SKILLS_LIST: PredefinedSkill[] = Object.values(Predefine
 export const PREDEFINED_CERTIFICATIONS_LIST: PredefinedCertification[] = Object.values(PredefinedCertification);
 
 
-
+// --- BLOG CONSTANTS ---
 export const SAMPLE_BLOG_POSTS: BlogPost[] = [
   {
     id: 'blog-post-1',
@@ -355,35 +490,14 @@ export const SAMPLE_BLOG_POSTS: BlogPost[] = [
   }
 ];
 
-
+// --- PAYMENT GATEWAY CONSTANTS ---
 export const PAYMENT_QR_CODES_BUCKET = 'payment_qrcodes';
 export const ALLOWED_QR_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
 export const MAX_QR_IMAGE_SIZE_MB = 2;
 
-
+// Notification Priority Options
 export const NOTIFICATION_PRIORITY_OPTIONS = [
   { value: 'Normal', label: 'Normal' },
   { value: 'Low', label: 'Low' },
   { value: 'Urgent', label: 'Urgent' },
 ];
-
-// --- MESSAGING & CASE MANAGEMENT ---
-export const ADMIN_USER_ID = '00000000-0000-0000-0000-000000000000'; // Static ID for Admin
-export const ADMIN_DISPLAY_NAME = 'CaringHandsNKY Admin';
-
-export const MAX_CASE_FILE_SIZE_MB = 10;
-export const ALLOWED_CASE_FILE_TYPES = [
-    'application/pdf', 
-    'image/png', 
-    'image/jpeg', 
-    'image/webp',
-    'text/plain',
-    'application/msword', // .doc
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-    'application/vnd.ms-excel', // .xls
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // .xlsx
-];
-
-// For modern admin layout
-export const ADMIN_SIDEBAR_WIDTH = "w-60"; // Equivalent to 240px for grid-cols-[240px,1fr]
-export const ADMIN_TOP_BAR_HEIGHT = "h-16"; // Equivalent to 64px

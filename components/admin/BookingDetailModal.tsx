@@ -1,8 +1,7 @@
-
 import React from 'react';
-import Modal from '../Modal'; 
+import Modal from '../Modal'; // Assuming Modal.tsx exists at this path
 import { AdminBooking, BookingStatus } from '../../types';
-import { CalendarDays, User, Clock4, Settings2 } from 'lucide-react';
+import { CalendarIcon, PersonIcon, ClockIcon, CogIcon } from '../../constants';
 
 interface BookingDetailModalProps {
   isOpen: boolean;
@@ -38,23 +37,23 @@ const BookingDetailModal: React.FC<BookingDetailModalProps> = ({ isOpen, onClose
         
         <div className="pt-2 mt-2 border-t border-slate-200">
             <h5 className="font-semibold text-primary mb-1">Patient Information:</h5>
-            <p><User size={16} className="mr-1 inline-block text-primary-light"/> {booking.patient_display_info}</p>
+            <p><PersonIcon className="w-4 h-4 mr-1 inline-block text-primary-light"/> {booking.patient_display_info}</p>
             {booking.patient_id && <p className="text-xs text-slate-500 ml-5">Patient System ID: {booking.patient_id}</p>}
         </div>
 
         {booking.caregiver_full_name && (
             <div className="pt-2 mt-2 border-t border-slate-200">
                 <h5 className="font-semibold text-primary mb-1">Assigned Caregiver:</h5>
-                <p><User size={16} className="mr-1 inline-block text-secondary-light"/> {booking.caregiver_full_name}</p>
+                <p><PersonIcon className="w-4 h-4 mr-1 inline-block text-secondary-light"/> {booking.caregiver_full_name}</p>
                 {booking.caregiver_id && <p className="text-xs text-slate-500 ml-5">Caregiver System ID: {booking.caregiver_id}</p>}
             </div>
         )}
 
         <div className="pt-2 mt-2 border-t border-slate-200">
             <h5 className="font-semibold text-primary mb-1">Service & Schedule:</h5>
-            <p><Settings2 size={16} className="mr-1 inline-block"/> Service: {booking.service_name}</p>
-            <p><CalendarDays size={16} className="mr-1 inline-block"/> Date: {new Date(booking.booking_date).toLocaleDateString()}</p>
-            <p><Clock4 size={16} className="mr-1 inline-block"/> Time: {booking.start_time} {booking.end_time ? ` - ${booking.end_time}` : ''}</p>
+            <p><CogIcon className="w-4 h-4 mr-1 inline-block"/> Service: {booking.service_name}</p>
+            <p><CalendarIcon className="w-4 h-4 mr-1 inline-block"/> Date: {new Date(booking.booking_date).toLocaleDateString()}</p>
+            <p><ClockIcon className="w-4 h-4 mr-1 inline-block"/> Time: {booking.start_time} {booking.end_time ? ` - ${booking.end_time}` : ''}</p>
             {booking.location && <p><strong>Location:</strong> {booking.location}</p>}
         </div>
         
@@ -69,7 +68,7 @@ const BookingDetailModal: React.FC<BookingDetailModalProps> = ({ isOpen, onClose
       </div>
       <button 
         onClick={onClose} 
-        className="mt-6 w-full bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-md transition-colors transform hover:scale-105 focus:scale-105"
+        className="mt-6 w-full bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-md transition-colors"
       >
         Close
       </button>

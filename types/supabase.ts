@@ -15,27 +15,20 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      patients: { 
+      patients: { // EXISTING TABLE
         Row: {
-          id: string 
-          created_at: string 
-          full_name: string 
-          email: string 
-          phone: string 
-          // New fields for Patient Dashboard profile editing
-          address: string | null
-          emergency_contact_name: string | null
-          emergency_contact_phone: string | null
+          id: string // uuid, primary key
+          created_at: string // timestamp with time zone, default now()
+          full_name: string // text, not null
+          email: string // text, unique, not null
+          phone: string // text, not null
         }
         Insert: {
-          id?: string 
-          created_at?: string 
+          id?: string // Default is gen_random_uuid()
+          created_at?: string // Default is now()
           full_name: string
           email: string
           phone: string
-          address?: string | null
-          emergency_contact_name?: string | null
-          emergency_contact_phone?: string | null
         }
         Update: {
           id?: string
@@ -43,70 +36,21 @@ export interface Database {
           full_name?: string
           email?: string
           phone?: string
-          address?: string | null
-          emergency_contact_name?: string | null
-          emergency_contact_phone?: string | null
         }
         Relationships: []
       }
-      patient_subscriptions: { // New table from Patient Dashboard step
+      services: { // EXISTING TABLE
         Row: {
-          id: string
-          patient_id: string
-          plan_name: string
-          price: number
-          duration: string
-          features: Json | null
-          start_date: string
-          end_date: string | null
-          status: string 
-          created_at: string
+          id: string // uuid, primary key
+          created_at?: string // timestamp with time zone, default now()
+          name: string // text, not null
+          description?: string | null // text
+          category?: string | null // text (maps to ServiceCategory enum)
+          price_per_hour?: number | null // numeric
+          is_active?: boolean // boolean, default true
         }
         Insert: {
-          id?: string
-          patient_id: string
-          plan_name: string
-          price: number
-          duration: string
-          features?: Json | null
-          start_date: string
-          end_date?: string | null
-          status: string 
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          patient_id?: string
-          plan_name?: string
-          price?: number
-          duration?: string
-          features?: Json | null
-          start_date?: string
-          end_date?: string | null
-          status?: string 
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "patient_subscriptions_patient_id_fkey"
-            columns: ["patient_id"]
-            referencedRelation: "patients"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      services: { 
-        Row: {
-          id: string 
-          created_at?: string 
-          name: string 
-          description?: string | null 
-          category?: string | null 
-          price_per_hour?: number | null 
-          is_active?: boolean 
-        }
-        Insert: {
-          id?: string 
+          id?: string // Default is gen_random_uuid()
           created_at?: string
           name: string
           description?: string | null
@@ -125,7 +69,7 @@ export interface Database {
         }
         Relationships: []
       }
-      caregivers: { 
+      caregivers: { // EXISTING TABLE
         Row: {
           id: string
           created_at: string 
@@ -167,7 +111,7 @@ export interface Database {
         }
         Relationships: []
       }
-      caregiver_shifts: { 
+      caregiver_shifts: { // EXISTING TABLE
         Row: {
           id: string
           caregiver_id: string | null 
@@ -210,16 +154,10 @@ export interface Database {
             columns: ["caregiver_id"]
             referencedRelation: "caregivers"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "caregiver_shifts_patient_id_fkey"
-            columns: ["patient_id"]
-            referencedRelation: "patients"
-            referencedColumns: ["id"]
           }
         ]
       }
-      caregiver_documents: { 
+      caregiver_documents: { // EXISTING TABLE
         Row: {
           id: string
           caregiver_id: string | null 
@@ -253,7 +191,7 @@ export interface Database {
           }
         ]
       }
-      caregiver_incidents: { 
+      caregiver_incidents: { // EXISTING TABLE
         Row: {
           id: string
           caregiver_id: string | null 
@@ -261,7 +199,6 @@ export interface Database {
           description: string | null 
           added_by: string | null 
           created_at: string 
-          attachment_url: string | null // Added attachment_url
         }
         Insert: {
           id?: string
@@ -270,7 +207,6 @@ export interface Database {
           description?: string | null
           added_by?: string | null
           created_at?: string
-          attachment_url?: string | null
         }
         Update: {
           id?: string
@@ -279,7 +215,6 @@ export interface Database {
           description?: string | null
           added_by?: string | null
           created_at?: string
-          attachment_url?: string | null
         }
         Relationships: [
           {
@@ -290,16 +225,15 @@ export interface Database {
           }
         ]
       }
-      caregiver_notifications: { 
+      caregiver_notifications: { // EXISTING TABLE (This table is for admin-sent messages, distinct from automated system notifications)
         Row: {
           id: string
           caregiver_id: string | null 
-          type: string | null 
+          type: string | null // Renamed to 'title' in app types. DB 'type' might be broad category.
           message: string | null 
           method: string | null 
           status: string 
           created_at: string 
-          priority: string | null // Added from app type
         }
         Insert: {
           id?: string
@@ -309,7 +243,6 @@ export interface Database {
           method?: string | null
           status?: string
           created_at?: string
-          priority?: string | null
         }
         Update: {
           id?: string
@@ -319,7 +252,6 @@ export interface Database {
           method?: string | null
           status?: string
           created_at?: string
-          priority?: string | null
         }
         Relationships: [
           {
@@ -330,7 +262,7 @@ export interface Database {
           }
         ]
       }
-      bookings: { 
+      bookings: { // EXISTING TABLE
         Row: {
           id: string
           patient_id: string | null 
@@ -385,7 +317,7 @@ export interface Database {
           }
         ]
       }
-      booking_logs: { 
+      booking_logs: { // EXISTING TABLE
         Row: {
           id: string
           booking_id: string | null 
@@ -419,7 +351,7 @@ export interface Database {
           }
         ]
       }
-      payment_gateways: { 
+      payment_gateways: { // EXISTING TABLE
         Row: {
           id: string 
           type: string | null 
@@ -449,7 +381,7 @@ export interface Database {
         }
         Relationships: []
       }
-      service_pricing: { 
+      service_pricing: { // EXISTING TABLE
         Row: {
           id: string 
           service_name: string | null 
@@ -476,7 +408,7 @@ export interface Database {
         }
         Relationships: []
       }
-      payments: { 
+      payments: { // EXISTING TABLE
         Row: {
           id: string 
           patient_id: string | null 
@@ -504,16 +436,9 @@ export interface Database {
           status?: string
           created_at?: string
         }
-        Relationships: [
-           {
-            foreignKeyName: "payments_patient_id_fkey"
-            columns: ["patient_id"]
-            referencedRelation: "patients"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: [] // Potentially add FK to patients table
       }
-      subscriptions: { 
+      subscriptions: { // EXISTING TABLE
         Row: {
           id: string 
           patient_id: string | null 
@@ -547,16 +472,9 @@ export interface Database {
           status?: string
           created_at?: string
         }
-        Relationships: [
-           {
-            foreignKeyName: "subscriptions_patient_id_fkey"
-            columns: ["patient_id"]
-            referencedRelation: "patients"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: [] // Potentially add FK to patients table
       }
-      refunds: { 
+      refunds: { // EXISTING TABLE
         Row: {
           id: string 
           payment_id: string | null 
@@ -593,14 +511,13 @@ export interface Database {
           }
         ]
       }
-      audit_log: { 
+      audit_log: { // EXISTING TABLE
         Row: {
           id: string 
           module: string | null 
           action: string | null 
-          user_info: string | null // Renamed from user to avoid keyword, and to store more info
+          user: string | null 
           target_id: string | null 
-          target_type: string | null // Added target_type
           notes: string | null 
           timestamp: string 
         }
@@ -608,9 +525,8 @@ export interface Database {
           id?: string
           module: string 
           action: string 
-          user_info?: string | null
+          user?: string | null
           target_id?: string | null
-          target_type?: string | null
           notes?: string | null
           timestamp?: string
         }
@@ -618,104 +534,30 @@ export interface Database {
           id?: string
           module?: string
           action?: string
-          user_info?: string | null
+          user?: string | null
           target_id?: string | null
-          target_type?: string | null
           notes?: string | null
           timestamp?: string
         }
         Relationships: []
       }
-      inventory_items: { // New table for Inventory
-        Row: {
-          id: string;
-          name: string;
-          category: string | null;
-          quantity: number;
-          reorder_level: number | null;
-          unit: string | null; // e.g., 'pcs', 'box', 'ml'
-          notes: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          name: string;
-          category?: string | null;
-          quantity: number;
-          reorder_level?: number | null;
-          unit?: string | null;
-          notes?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          name?: string;
-          category?: string | null;
-          quantity?: number;
-          reorder_level?: number | null;
-          unit?: string | null;
-          notes?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      }
-      inventory_logs: { // New table for Inventory Logs
-        Row: {
-          id: string;
-          item_id: string;
-          action_type: string; // e.g., 'STOCK_IN', 'STOCK_OUT', 'ADJUSTMENT'
-          quantity_changed: number;
-          user_info: string | null; // Who performed action
-          notes: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          item_id: string;
-          action_type: string;
-          quantity_changed: number;
-          user_info?: string | null;
-          notes?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          item_id?: string;
-          action_type?: string;
-          quantity_changed?: number;
-          user_info?: string | null;
-          notes?: string | null;
-          created_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "inventory_logs_item_id_fkey";
-            columns: ["item_id"];
-            referencedRelation: "inventory_items";
-            referencedColumns: ["id"];
-          }
-        ];
-      }
-      // --- TABLES FOR NOTIFICATIONS (from previous step) ---
+      // --- NEW TABLES FOR NOTIFICATIONS ---
       notification_logs: {
         Row: {
-          id: string 
-          user_id: string | null 
-          recipient_contact: string 
-          notification_type: string 
-          medium: string 
-          status: string 
-          subject: string | null 
-          body: string | null 
-          error_message: string | null 
-          reference_id: string | null 
-          created_at: string 
+          id: string // uuid, primary key
+          user_id: string | null // uuid, can be patient_id or caregiver_id
+          recipient_contact: string // text, email or phone
+          notification_type: string // text, e.g., from NotificationType enum
+          medium: string // text, 'EMAIL' or 'SMS'
+          status: string // text, e.g., 'SENT', 'FAILED', 'PENDING_RETRY'
+          subject: string | null // text, for email subject
+          body: string | null // text, for email/SMS body or template identifier
+          error_message: string | null // text, if status is 'FAILED'
+          reference_id: string | null // text, e.g., booking_id
+          created_at: string // timestamp with time zone, default now()
         }
         Insert: {
-          id?: string 
+          id?: string // Default is gen_random_uuid()
           user_id?: string | null
           recipient_contact: string
           notification_type: string
@@ -725,9 +567,9 @@ export interface Database {
           body?: string | null
           error_message?: string | null
           reference_id?: string | null
-          created_at?: string 
+          created_at?: string // Default is now()
         }
-        Update: { 
+        Update: { // Logs are typically not updated, but status might be
           id?: string
           user_id?: string | null
           recipient_contact?: string
@@ -740,24 +582,38 @@ export interface Database {
           reference_id?: string | null
           created_at?: string
         }
-        Relationships: []
+        Relationships: [
+          // Optional: Add FK to patients or caregivers if user_id is strictly one of them
+          // {
+          //   foreignKeyName: "notification_logs_user_id_fkey_patient" 
+          //   columns: ["user_id"]
+          //   referencedRelation: "patients"
+          //   referencedColumns: ["id"]
+          // },
+          // {
+          //   foreignKeyName: "notification_logs_user_id_fkey_caregiver"
+          //   columns: ["user_id"]
+          //   referencedRelation: "caregivers"
+          //   referencedColumns: ["id"]
+          // }
+        ]
       }
       notification_event_settings: {
         Row: {
-          id: string 
-          event_type: string 
-          email_enabled: boolean 
-          sms_enabled: boolean 
-          description: string | null 
-          updated_at: string 
+          id: string // uuid, primary key
+          event_type: string // text, unique, e.g., from NotificationType enum
+          email_enabled: boolean // boolean, default true
+          sms_enabled: boolean // boolean, default false
+          description: string | null // text, for admin panel display
+          updated_at: string // timestamp with time zone, default now()
         }
         Insert: {
-          id?: string 
+          id?: string // Default is gen_random_uuid()
           event_type: string
           email_enabled?: boolean
           sms_enabled?: boolean
           description?: string | null
-          updated_at?: string 
+          updated_at?: string // Default is now()
         }
         Update: {
           id?: string
@@ -768,188 +624,6 @@ export interface Database {
           updated_at?: string
         }
         Relationships: []
-      }
-      // --- NEW TABLES FOR MESSAGING & CASE MANAGEMENT ---
-      messages: {
-        Row: {
-          id: string // uuid, pk
-          sender_id: string // uuid, identifies sender (patient, caregiver, or admin)
-          recipient_id: string // uuid, identifies recipient
-          sender_type: string // 'patient', 'caregiver', 'admin'
-          recipient_type: string // 'patient', 'caregiver', 'admin'
-          content: string // text, not null
-          created_at: string // timestamptz, default now()
-          read_at: string | null // timestamptz, nullable
-        }
-        Insert: {
-          id?: string
-          sender_id: string
-          recipient_id: string
-          sender_type: string
-          recipient_type: string
-          content: string
-          created_at?: string
-          read_at?: string | null
-        }
-        Update: { // Typically only read_at would be updated
-          id?: string
-          sender_id?: string
-          recipient_id?: string
-          sender_type?: string
-          recipient_type?: string
-          content?: string
-          created_at?: string
-          read_at?: string | null
-        }
-        Relationships: [] // FKs to patients/caregivers could be added if IDs are always from there
-      }
-      cases: {
-        Row: {
-          id: string // uuid, pk
-          patient_id: string // uuid, fk to patients.id, not null
-          assigned_staff_id: string | null // uuid, nullable, fk to caregivers.id (or future staff table)
-          title: string // text, not null
-          description: string // text, not null
-          tags: Json | null // jsonb, e.g., ["Urgent", "Follow-Up"]
-          status: string // text, not null, e.g., 'Open', 'Active', 'Resolved', 'Closed'
-          created_by_id: string | null // uuid, admin/staff who created
-          created_by_type: string | null // 'admin', 'staff'
-          created_at: string // timestamptz, default now()
-          updated_at: string // timestamptz, default now()
-          resolved_at: string | null // timestamptz, nullable
-        }
-        Insert: {
-          id?: string
-          patient_id: string
-          assigned_staff_id?: string | null
-          title: string
-          description: string
-          tags?: Json | null
-          status: string
-          created_by_id?: string | null
-          created_by_type?: string | null
-          created_at?: string
-          updated_at?: string
-          resolved_at?: string | null
-        }
-        Update: {
-          id?: string
-          patient_id?: string
-          assigned_staff_id?: string | null
-          title?: string
-          description?: string
-          tags?: Json | null
-          status?: string
-          created_by_id?: string | null
-          created_by_type?: string | null
-          created_at?: string
-          updated_at?: string
-          resolved_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "cases_patient_id_fkey"
-            columns: ["patient_id"]
-            referencedRelation: "patients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cases_assigned_staff_id_fkey"
-            columns: ["assigned_staff_id"]
-            referencedRelation: "caregivers" // Assuming staff are caregivers for now
-            referencedColumns: ["id"]
-          }
-          // Add FK for created_by_id if there's a unified users/staff table
-        ]
-      }
-      case_notes: {
-        Row: {
-          id: string // uuid, pk
-          case_id: string // uuid, fk to cases.id, not null
-          author_id: string | null // uuid, who wrote the note
-          author_type: string | null // 'admin', 'patient', 'caregiver'
-          author_name: string | null // Store name for easy display
-          note: string // text, not null
-          created_at: string // timestamptz, default now()
-          visible_to_patient: boolean // boolean, default false
-        }
-        Insert: {
-          id?: string
-          case_id: string
-          author_id?: string | null
-          author_type?: string | null
-          author_name?: string | null
-          note: string
-          created_at?: string
-          visible_to_patient?: boolean
-        }
-        Update: { // Notes are typically immutable, but visibility might change
-          id?: string
-          case_id?: string
-          author_id?: string | null
-          author_type?: string | null
-          author_name?: string | null
-          note?: string
-          created_at?: string
-          visible_to_patient?: boolean
-        }
-        Relationships: [
-          {
-            foreignKeyName: "case_notes_case_id_fkey"
-            columns: ["case_id"]
-            referencedRelation: "cases"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      case_files: {
-        Row: {
-          id: string // uuid, pk
-          case_id: string // uuid, fk to cases.id, not null
-          uploader_id: string | null // uuid
-          uploader_type: string | null // 'admin', 'patient', 'caregiver'
-          uploader_name: string | null // Store name for easy display
-          file_name: string // text, not null
-          file_path: string // text, not null, path in Supabase Storage
-          file_type: string | null // text, MIME type
-          file_size: number | null // bigint
-          created_at: string // timestamptz, default now()
-          visible_to_patient: boolean // boolean, default false
-        }
-        Insert: {
-          id?: string
-          case_id: string
-          uploader_id?: string | null
-          uploader_type?: string | null
-          uploader_name?: string | null
-          file_name: string
-          file_path: string
-          file_type?: string | null
-          file_size?: number | null
-          created_at?: string
-          visible_to_patient?: boolean
-        }
-        Update: { // Files are typically immutable once uploaded, but visibility might change
-          id?: string
-          case_id?: string
-          uploader_id?: string | null
-          uploader_type?: string | null
-          uploader_name?: string | null
-          file_name?: string
-          file_path?: string
-          file_type?: string | null
-          file_size?: number | null
-          created_at?: string
-          visible_to_patient?: boolean
-        }
-        Relationships: [
-          {
-            foreignKeyName: "case_files_case_id_fkey"
-            columns: ["case_id"]
-            referencedRelation: "cases"
-            referencedColumns: ["id"]
-          }
-        ]
       }
     } // end Tables
     Views: {
@@ -966,4 +640,3 @@ export interface Database {
     }
   } // end public
 } // end Database
- 

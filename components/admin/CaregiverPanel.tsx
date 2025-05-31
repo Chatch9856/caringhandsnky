@@ -1,32 +1,28 @@
+
 import React, { useState, useEffect, useCallback, ChangeEvent, FormEvent } from 'react';
 import { 
-    CaregiverShift, CaregiverShiftFormData, ShiftStatus,
-    CaregiverDocument, CaregiverDocumentFormData, DocumentType, Caregiver
+    Caregiver, CaregiverFormData, CaregiverShift, CaregiverShiftFormData, ShiftStatus,
+    CaregiverDocument, CaregiverDocumentFormData, DocumentType
 } from '../../types';
 import { useToast } from '../ToastContext';
 import TabButton from '../TabButton';
 import LoadingSpinner from '../LoadingSpinner';
-// CaregiverListTable and CaregiverFormModal are no longer directly used here as that logic moved to AdminCaregiversPage.tsx
-
-// Services might still be needed if this panel directly manages shifts/docs, or they might be passed as props.
+import CaregiverListTable from '../CaregiverListTable';
+import CaregiverFormModal from '../CaregiverFormModal';
+import { getCaregivers, addCaregiver, updateCaregiver, deleteCaregiver } from '../../services/caregiverService';
 import { getCaregiverShifts, addCaregiverShift } from '../../services/caregiverShiftService';
 import { getCaregiverDocuments, addCaregiverDocument, deleteCaregiverDocument } from '../../services/caregiverDocumentService';
-import { getCaregivers } from '../../services/caregiverService'; // Still needed for dropdowns
-
 import {
-  CAREGIVER_SUB_TAB_LIST, // List tab is now handled by AdminCaregiversPage
-  CAREGIVER_SUB_TAB_SHIFTS, 
-  CAREGIVER_SUB_TAB_DOCUMENTS,
-  CAREGIVER_SUB_TAB_INCIDENTS, 
-  CAREGIVER_SUB_TAB_NOTIFICATIONS,
-  ClockSolidIcon, DocumentDuplicateIcon, ExclamationTriangleIcon, BellIcon,
-  PlusCircleIcon, DeleteIcon as TrashIcon, CloudArrowUpIcon,
+  CAREGIVER_SUB_TAB_LIST, CAREGIVER_SUB_TAB_SHIFTS, CAREGIVER_SUB_TAB_DOCUMENTS,
+  CAREGIVER_SUB_TAB_INCIDENTS, CAREGIVER_SUB_TAB_NOTIFICATIONS,
+  ListBulletIcon, ClockSolidIcon, DocumentDuplicateIcon, ExclamationCircleIcon, BellIcon,
+  PlusCircleIcon, RefreshIconSolid, DeleteIcon as TrashIcon, CloudArrowUpIcon,
   ALLOWED_DOCUMENT_TYPES, MAX_DOCUMENT_SIZE_MB, CAREGIVER_DOCUMENT_TYPE_OPTIONS
 } from '../../constants';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '../../supabaseClient'; // Import supabase
 
 type CaregiverSubTab = 
-  // typeof CAREGIVER_SUB_TAB_LIST | // This tab's functionality moved
+  typeof CAREGIVER_SUB_TAB_LIST | 
   typeof CAREGIVER_SUB_TAB_SHIFTS | 
   typeof CAREGIVER_SUB_TAB_DOCUMENTS | 
   typeof CAREGIVER_SUB_TAB_INCIDENTS | 
@@ -37,17 +33,17 @@ const labelBaseClass = "block text-sm font-medium text-neutral-dark";
 const buttonBaseClass = "font-semibold py-2 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center disabled:opacity-60";
 
 
-// This component might be refactored to accept a caregiverId if it's meant to show details for one caregiver,
-// or it might need to fetch all caregivers if it's a general management panel for these sub-features.
-// For now, keeping its structure similar but noting the list functionality has moved.
 const CaregiverPanel: React.FC = () => {
-  const [activeSubTab, setActiveSubTab] = useState<CaregiverSubTab>(CAREGIVER_SUB_TAB_SHIFTS); // Default to shifts
+  const [activeSubTab, setActiveSubTab] = useState<CaregiverSubTab>(CAREGIVER_SUB_TAB_LIST);
   const { addToast } = useToast();
 
-  // State for caregivers (needed for dropdowns in Shifts/Documents forms)
+  // Caregiver List State
   const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
-  const [isLoadingCaregiversForDropdown, setIsLoadingCaregiversForDropdown] = useState(false);
-
+  const [isLoadingCaregivers, setIsLoadingCaregivers] = useState(false);
+  const [caregiversError, setCaregiversError] = useState<string | null>(null);
+  const [isCaregiverModalOpen, setIsCaregiverModalOpen] = useState(false);
+  const [editingCaregiver, setEditingCaregiver] = useState<CaregiverFormData | null>(null);
+  const [isSavingCaregiver, setIsSavingCaregiver] = useState(false);
 
   // Shifts State
   const [shifts, setShifts] = useState<CaregiverShift[]>([]);
@@ -70,29 +66,22 @@ const CaregiverPanel: React.FC = () => {
   const [isUploadingDocument, setIsUploadingDocument] = useState(false);
   const [docFilePreview, setDocFilePreview] = useState<string | null>(null);
 
-  // Fetch caregivers for dropdowns
-  const fetchCaregiversForDropdowns = useCallback(async () => {
-    setIsLoadingCaregiversForDropdown(true);
+
+  // --- Data Fetching Callbacks ---
+  const fetchCaregivers = useCallback(async () => {
+    setIsLoadingCaregivers(true);
+    setCaregiversError(null);
     try {
       const data = await getCaregivers();
       setCaregivers(data);
     } catch (err: any) {
-      addToast(`Failed to load caregivers for selection: ${err.message}`, "error");
+      setCaregiversError(`Failed to load caregivers: ${err.message}`);
+      addToast(`Failed to load caregivers: ${err.message}`, "error");
     } finally {
-      setIsLoadingCaregiversForDropdown(false);
+      setIsLoadingCaregivers(false);
     }
   }, [addToast]);
 
-  useEffect(() => {
-    if (activeSubTab === CAREGIVER_SUB_TAB_SHIFTS || activeSubTab === CAREGIVER_SUB_TAB_DOCUMENTS) {
-        if (caregivers.length === 0) { // Only fetch if not already populated
-            fetchCaregiversForDropdowns();
-        }
-    }
-  }, [activeSubTab, caregivers.length, fetchCaregiversForDropdowns]);
-
-
-  // --- Data Fetching Callbacks for Sub-tabs ---
   const fetchShifts = useCallback(async () => {
     setIsLoadingShifts(true);
     try {
@@ -117,6 +106,11 @@ const CaregiverPanel: React.FC = () => {
     }
   }, [addToast]);
 
+  // Initial caregiver fetch and tab-specific fetching
+  useEffect(() => {
+    fetchCaregivers();
+  }, [fetchCaregivers]);
+
   useEffect(() => {
     if (activeSubTab === CAREGIVER_SUB_TAB_SHIFTS) {
       fetchShifts();
@@ -125,6 +119,45 @@ const CaregiverPanel: React.FC = () => {
     }
   }, [activeSubTab, fetchShifts, fetchDocuments]);
 
+  // --- Caregiver List Handlers ---
+  const handleOpenAddCaregiverModal = () => { setEditingCaregiver(null); setIsCaregiverModalOpen(true); };
+  const handleOpenEditCaregiverModal = (cg: Caregiver) => { setEditingCaregiver(cg); setIsCaregiverModalOpen(true); };
+  const handleCloseCaregiverModal = () => { setIsCaregiverModalOpen(false); setEditingCaregiver(null); };
+  
+  const handleCaregiverFormSubmit = async (data: CaregiverFormData, file?: File | null) => {
+    if (!supabase) {
+      addToast("Cannot save caregiver: Database connection is not configured. Please contact support.", "error");
+      setIsSavingCaregiver(false);
+      return;
+    }
+    setIsSavingCaregiver(true);
+    try {
+      if (editingCaregiver?.id) {
+        await updateCaregiver(editingCaregiver.id, data, file);
+        addToast('Caregiver updated successfully!', 'success');
+      } else {
+        await addCaregiver(data, file === null ? undefined : file);
+        addToast('Caregiver added successfully!', 'success');
+      }
+      setIsCaregiverModalOpen(false);
+      fetchCaregivers();
+    } catch (err: any) { addToast(`Failed to save caregiver: ${err.message}`, 'error');
+    } finally { setIsSavingCaregiver(false); }
+  };
+
+  const handleDeleteCaregiver = async (id: string) => {
+    if (!supabase) {
+      addToast("Cannot delete caregiver: Database connection is not configured. Please contact support.", "error");
+      return;
+    }
+    if (window.confirm("Are you sure you want to delete this caregiver? This also deletes related shifts and documents if not handled by DB constraints.")) {
+      try {
+        await deleteCaregiver(id);
+        addToast('Caregiver deleted successfully!', 'success');
+        fetchCaregivers();
+      } catch (err: any) { addToast(`Failed to delete caregiver: ${err.message}`, 'error'); }
+    }
+  };
 
   // --- Shifts Handlers ---
   const handleShiftInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -134,7 +167,8 @@ const CaregiverPanel: React.FC = () => {
   const handleAddShiftSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!supabase) {
-      addToast("Cannot add shift: Database connection is not configured.", "error");
+      addToast("Cannot add shift: Database connection is not configured. Please contact support.", "error");
+      setIsSavingShift(false);
       return;
     }
     if (!newShiftData.caregiver_id || !newShiftData.shift_date || !newShiftData.start_time || !newShiftData.end_time || !newShiftData.patient_identifier_notes?.trim()) {
@@ -164,18 +198,18 @@ const CaregiverPanel: React.FC = () => {
             addToast(`Invalid file type. Allowed: ${ALLOWED_DOCUMENT_TYPES.map(t=>t.split('/')[1]).join(', ')}`, "error");
             setNewDocFormData(prev => ({ ...prev, file: null }));
             setDocFilePreview(null);
-            e.target.value = '';
+            e.target.value = ''; // Reset file input
             return;
         }
         if (file.size > MAX_DOCUMENT_SIZE_MB * 1024 * 1024) {
             addToast(`File size exceeds ${MAX_DOCUMENT_SIZE_MB}MB.`, "error");
             setNewDocFormData(prev => ({ ...prev, file: null }));
             setDocFilePreview(null);
-            e.target.value = '';
+            e.target.value = ''; // Reset file input
             return;
         }
         setNewDocFormData(prev => ({ ...prev, file }));
-        setDocFilePreview(file.name);
+        setDocFilePreview(file.name); // Show file name as preview
     } else {
         setNewDocFormData(prev => ({ ...prev, file: null }));
         setDocFilePreview(null);
@@ -185,7 +219,8 @@ const CaregiverPanel: React.FC = () => {
   const handleAddDocumentSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!supabase) {
-      addToast("Cannot upload document: Database connection is not configured.", "error");
+      addToast("Cannot upload document: Database connection is not configured. Please contact support.", "error");
+      setIsUploadingDocument(false);
       return;
     }
     if (!newDocFormData.caregiver_id || !newDocFormData.doc_type || !newDocFormData.file) {
@@ -206,7 +241,7 @@ const CaregiverPanel: React.FC = () => {
 
   const handleDeleteDocument = async (docId: string, docUrl: string) => {
     if (!supabase) {
-      addToast("Cannot delete document: Database connection is not configured.", "error");
+      addToast("Cannot delete document: Database connection is not configured. Please contact support.", "error");
       return;
     }
      if (window.confirm("Are you sure you want to delete this document? This action cannot be undone.")) {
@@ -224,23 +259,20 @@ const CaregiverPanel: React.FC = () => {
 
   return (
     <div className="bg-white rounded-xl shadow-sm">
-      {/* This panel might need its own header if it's a standalone page now for these sub-features */}
-      {/* Or these tabs could be integrated into a new layout for /admin/caregivers/shifts etc. */}
       <div className="p-6">
-        <h2 className="text-2xl font-semibold text-primary-dark mb-1">Caregiver Operations</h2>
+        <h2 className="text-2xl font-semibold text-primary-dark mb-1">Manage Caregivers & Operations</h2>
         <p className="text-sm text-neutral-DEFAULT mb-4">
-          Manage caregiver schedules, documents, and other operational aspects.
+          Oversee caregiver profiles, schedules, documents, and other operational aspects.
         </p>
       </div>
 
       <div className="mb-0 border-b border-slate-200 px-2 md:px-4">
         <div className="flex space-x-1 -mb-px overflow-x-auto pb-0">
           {[
-            // The "List" tab is now effectively AdminCaregiversPage.tsx
-            // { label: "Caregiver List", id: CAREGIVER_SUB_TAB_LIST, icon: <ListBulletIcon className="w-5 h-5" /> },
+            { label: "Caregiver List", id: CAREGIVER_SUB_TAB_LIST, icon: <ListBulletIcon className="w-5 h-5" /> },
             { label: "Manage Shifts", id: CAREGIVER_SUB_TAB_SHIFTS, icon: <ClockSolidIcon className="w-5 h-5" /> },
             { label: "Documents", id: CAREGIVER_SUB_TAB_DOCUMENTS, icon: <DocumentDuplicateIcon className="w-5 h-5" /> },
-            { label: "Incidents", id: CAREGIVER_SUB_TAB_INCIDENTS, icon: <ExclamationTriangleIcon className="w-5 h-5" />, disabled: true },
+            { label: "Incidents", id: CAREGIVER_SUB_TAB_INCIDENTS, icon: <ExclamationCircleIcon className="w-5 h-5" />, disabled: true },
             { label: "Notifications", id: CAREGIVER_SUB_TAB_NOTIFICATIONS, icon: <BellIcon className="w-5 h-5" />, disabled: true },
           ].map(tab => (
             <TabButton
@@ -256,7 +288,25 @@ const CaregiverPanel: React.FC = () => {
       </div>
 
       <div className="p-6">
-        {/* Content for Shifts */}
+        {activeSubTab === CAREGIVER_SUB_TAB_LIST && (
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-primary-dark">All Caregivers</h3>
+              <div className="space-x-2">
+                <button onClick={fetchCaregivers} className={`${buttonBaseClass} bg-primary-light hover:bg-primary text-primary-dark hover:text-white text-sm`} title="Refresh caregiver list" disabled={isLoadingCaregivers}>
+                  <RefreshIconSolid className={`w-4 h-4 mr-2 ${isLoadingCaregivers ? 'animate-spin' : ''}`} /> Sync
+                </button>
+                <button onClick={handleOpenAddCaregiverModal} className={`${buttonBaseClass} bg-accent hover:bg-accent-dark text-white text-sm`} title="Add a new caregiver">
+                  <PlusCircleIcon className="w-5 h-5 mr-1" /> Add Caregiver
+                </button>
+              </div>
+            </div>
+            {caregiversError && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl shadow-sm mb-4" role="alert">{caregiversError}</div>}
+            <CaregiverListTable caregivers={caregivers} onEdit={handleOpenEditCaregiverModal} onDelete={handleDeleteCaregiver} isLoading={isLoadingCaregivers} />
+            <CaregiverFormModal isOpen={isCaregiverModalOpen} onClose={handleCloseCaregiverModal} onSubmit={handleCaregiverFormSubmit} initialData={editingCaregiver} isSaving={isSavingCaregiver} />
+          </div>
+        )}
+
         {activeSubTab === CAREGIVER_SUB_TAB_SHIFTS && (
           <div>
             <div className="flex justify-between items-center mb-6">
@@ -271,8 +321,8 @@ const CaregiverPanel: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="caregiver_id_shift" className={labelBaseClass}>Caregiver</label>
-                    <select name="caregiver_id" id="caregiver_id_shift" value={newShiftData.caregiver_id} onChange={handleShiftInputChange} required className={`${inputBaseClass} bg-white`} disabled={isLoadingCaregiversForDropdown}>
-                      <option value="" disabled>{isLoadingCaregiversForDropdown ? "Loading..." : "Select Caregiver"}</option>
+                    <select name="caregiver_id" id="caregiver_id_shift" value={newShiftData.caregiver_id} onChange={handleShiftInputChange} required className={`${inputBaseClass} bg-white`}>
+                      <option value="" disabled>Select Caregiver</option>
                       {caregivers.map(cg => <option key={cg.id} value={cg.id}>{cg.full_name}</option>)}
                     </select>
                   </div>
@@ -325,7 +375,6 @@ const CaregiverPanel: React.FC = () => {
           </div>
         )}
 
-        {/* Content for Documents */}
         {activeSubTab === CAREGIVER_SUB_TAB_DOCUMENTS && (
           <div>
             <div className="flex justify-between items-center mb-6">
@@ -340,8 +389,8 @@ const CaregiverPanel: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="caregiver_id_doc" className={labelBaseClass}>Caregiver</label>
-                    <select name="caregiver_id" id="caregiver_id_doc" value={newDocFormData.caregiver_id} onChange={handleDocInputChange} required className={`${inputBaseClass} bg-white`} disabled={isLoadingCaregiversForDropdown}>
-                       <option value="" disabled>{isLoadingCaregiversForDropdown ? "Loading..." : "Select Caregiver"}</option>
+                    <select name="caregiver_id" id="caregiver_id_doc" value={newDocFormData.caregiver_id} onChange={handleDocInputChange} required className={`${inputBaseClass} bg-white`}>
+                      <option value="" disabled>Select Caregiver</option>
                       {caregivers.map(cg => <option key={cg.id} value={cg.id}>{cg.full_name}</option>)}
                     </select>
                   </div>
@@ -388,16 +437,19 @@ const CaregiverPanel: React.FC = () => {
           </div>
         )}
 
-        {/* Placeholder for Incidents and Notifications */}
         {[CAREGIVER_SUB_TAB_INCIDENTS, CAREGIVER_SUB_TAB_NOTIFICATIONS].includes(activeSubTab as any) && (
           <div className="text-center py-10 p-6 border border-slate-200 rounded-xl bg-slate-50 shadow-sm">
-            {activeSubTab === CAREGIVER_SUB_TAB_INCIDENTS && <ExclamationTriangleIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />}
+            {activeSubTab === CAREGIVER_SUB_TAB_INCIDENTS && <ExclamationCircleIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />}
             {activeSubTab === CAREGIVER_SUB_TAB_NOTIFICATIONS && <BellIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />}
             <h3 className="text-xl font-semibold text-primary-dark mb-2">
               {activeSubTab === CAREGIVER_SUB_TAB_INCIDENTS ? "Record & View Incidents" : "Send Notifications"}
             </h3>
-            <p className="text-neutral-DEFAULT">This feature is under development.</p>
-            <p className="text-sm text-slate-400 mt-2">(Coming Soon)</p>
+            <p className="text-neutral-DEFAULT">
+              {activeSubTab === CAREGIVER_SUB_TAB_INCIDENTS 
+                ? "This section will be for logging and reviewing caregiver-related incidents." 
+                : "This section will be for sending notifications to caregivers."}
+            </p>
+            <p className="text-sm text-slate-400 mt-2">(Feature coming soon)</p>
           </div>
         )}
       </div>
