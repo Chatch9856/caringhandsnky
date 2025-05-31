@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useCallback, useContext, ReactNode } from 'react';
 import { CheckCircleIcon, XCircleIcon, InformationCircleIcon } from '../constants'; // Assuming these icons are in constants
 

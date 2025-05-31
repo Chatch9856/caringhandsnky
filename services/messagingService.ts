@@ -38,19 +38,13 @@ export const getUsersForMessaging = async (currentUser: MessageUser): Promise<Me
 
   if (currentUser.type === UserType.ADMIN) {
     // Admin can message all patients and caregivers
-    const { data: patients, error: patientError } = await supabase.from('patients').select('id, full_name'); // Removed profile_image_url
-    if (patientError) {
-      console.error("Error fetching patients for admin messaging:", patientError);
-    } else {
-      patients?.forEach(p => users.push({ id: p.id, name: p.full_name, type: UserType.PATIENT, avatarUrl: null }));
-    }
+    const { data: patients, error: patientError } = await supabase.from('patients').select('id, full_name, profile_image_url');
+    if (patientError) console.error("Error fetching patients for admin messaging:", patientError);
+    else patients?.forEach(p => users.push({ id: p.id, name: p.full_name, type: UserType.PATIENT, avatarUrl: null }));
 
     const { data: caregivers, error: caregiverError } = await supabase.from('caregivers').select('id, full_name, profile_image_url');
-    if (caregiverError) {
-      console.error("Error fetching caregivers for admin messaging:", caregiverError);
-    } else {
-      caregivers?.forEach(c => users.push({ id: c.id, name: c.full_name, type: UserType.CAREGIVER, avatarUrl: c.profile_image_url }));
-    }
+    if (caregiverError) console.error("Error fetching caregivers for admin messaging:", caregiverError);
+    else caregivers?.forEach(c => users.push({ id: c.id, name: c.full_name, type: UserType.CAREGIVER, avatarUrl: c.profile_image_url }));
   
   } else if (currentUser.type === UserType.PATIENT) {
     // Patient can message Admin

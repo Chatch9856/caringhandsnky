@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SAMPLE_BLOG_POSTS, NewspaperIcon } from '../constants';
 import BlogPostCard from '../components/BlogPostCard';

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SAMPLE_BLOG_POSTS, ROUTE_BLOG, ROUTE_HOME, UserCircleIcon, CalendarIcon } from '../constants';
@@ -100,7 +99,17 @@ const BlogPostPage: React.FC = () => {
             margin-bottom: 1em;
           }
           .prose li {
-            margin-bottom: 0.5em; /* Example style */
+            margin-bottom: 0.5em;
+          }
+          .prose a {
+            color: #f59e0b; /* accent-DEFAULT */
+            text-decoration: underline;
+          }
+          .prose a:hover {
+            color: #b45309; /* accent-dark */
+          }
+          .prose strong {
+            font-weight: 600;
           }
         `}
       </style>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Modal from './Modal';
 import LoadingSpinner from './LoadingSpinner';

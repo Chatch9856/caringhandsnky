@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useToast } from '../ToastContext';
 import LoadingSpinner from '../LoadingSpinner';
-import { Case, Patient, Caregiver, CaseStatus, CaseTag, AdminCaseSortOption, UserType, CaregiverStatus } from '../../types'; // Added UserType, CaregiverStatus
+import { Case, Patient, Caregiver, CaseStatus, CaseTag, AdminCaseSortOption, UserType } from '../../types'; // Added UserType
 import { getCases, createCase, updateCase } from '../../services/caseManagementService';
-import { getCaregivers } from '../../services/caregiverService'; // Import getCaregivers
 import { supabase } from '../../supabaseClient';
 import { BriefcaseIcon, PlusCircleIcon, RefreshIconSolid, UserCircleIcon, CogIcon } from '../../constants';
 import CaseFormModal from './case_management/CaseFormModal';
@@ -38,19 +37,14 @@ const AdminCasesPanel: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const [casesData, patientsDataResult, allCaregiversData] = await Promise.all([
+      const [casesData, patientsData, caregiversData] = await Promise.all([
         getCases(),
-        supabase.from('patients').select('*').order('full_name'), // Fetch full patient objects
-        getCaregivers() // Fetch full, mapped caregiver objects
+        supabase.from('patients').select('id, full_name').order('full_name'),
+        supabase.from('caregivers').select('id, full_name').eq('status', 'Active').order('full_name')
       ]);
       setCases(casesData);
-      setPatients(patientsDataResult.data || []);
-      // Filter active caregivers client-side and sort
-      setCaregivers(
-        allCaregiversData
-          .filter(cg => cg.status === CaregiverStatus.ACTIVE)
-          .sort((a,b) => a.full_name.localeCompare(b.full_name))
-      );
+      setPatients(patientsData.data || []);
+      setCaregivers(caregiversData.data || []);
     } catch (err: any) {
       setError(`Failed to load case data: ${err.message}`);
       addToast(`Error: ${err.message}`, 'error');
@@ -70,8 +64,6 @@ const AdminCasesPanel: React.FC = () => {
         // const updatedCase = await updateCase(caseId, formData);
         // setCases(prev => prev.map(c => c.id === caseId ? updatedCase : c));
         addToast('Case updated successfully!', 'success'); // Placeholder
-         // For edit, re-fetch the specific case or all cases to reflect changes
-        fetchInitialData();
       } else { // Creating new case
         const newCase = await createCase(formData, 'ADMIN_USER_ID_PLACEHOLDER', UserType.ADMIN); // Corrected: Use UserType.ADMIN
         setCases(prev => [newCase, ...prev]);

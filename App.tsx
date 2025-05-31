@@ -21,11 +21,11 @@ import { ToastProvider } from './components/ToastContext';
 // Admin Panels (some might be renamed or used directly from old AdminDashboardPage imports)
 import AdminDashboardPanel from './pages/admin_panels/AdminDashboardPanel'; 
 import AdminCaregiversPage from './AdminCaregiversPage'; 
-import AdminBookingsPage from './pages/admin_panels/AdminBookingsPage.tsx'; // Ensured relative path and added .tsx
+import AdminBookingsPage from './pages/admin_panels/AdminBookingsPage'; // Ensured relative path
 import AdminPaymentsPanel from './components/admin/AdminPaymentsPanel';
 import AdminMessagesPage from './AdminMessagesPage'; 
 import AdminCasesPanel from './components/admin/AdminCasesPanel';
-import AdminReportsPanel from './components/admin/AdminReportsPanel'; 
+import AdminReportsPanel from './components/admin/AdminReportsPanel';
 import AdminInventoryPanel from './components/admin/AdminInventoryPanel';
 import AdminActivityLogPanel from './components/admin/AdminActivityLogPanel';
 import AdminSettingsPanel from './components/admin/settings/AdminSettingsPanel';
